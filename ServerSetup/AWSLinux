@@ -5,31 +5,26 @@ sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-
 sudo yum install aspnetcore-runtime-5.0 -y
 sudo yum install dotnet-sdk-5.0 -y
 
-#Git and Repo
+#Git Repo
 sudo yum install git -y
-makedir Repos
+mkdir Repos
 cd Repos
 git clone https://github.com/ryan-policheri/MobileEquations.git
 
 #Build
 cd ..
+mkdir Api
+dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi --output Api
 
-
-
+#Web Server
 sudo yum install httpd -y
 sudo yum install httpd mod_ssl -y
+sudo cp Repos/MobileEquations/ServerSetup/Api.conf /etc/httpd/conf.d/Api.conf
 
-sudo touch /etc/httpd/conf.d/Api.conf
-sudo echo -e "<VirtualHost *:*> RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME} </VirtualHost> <VirtualHost *:80> ProxyPreserveHost On ProxyPass / http://127.0.0.1:5000/ ProxyPassReverse / http://127.0.0.1:5000/ ServerName www.example.com ServerAlias *.example.com ErrorLog ${APACHE_LOG_DIR}helloapp-error.log CustomLog ${APACHE_LOG_DIR}helloapp-access.log common </VirtualHost>" >> /etc/httpd/conf.d/Api.conf
-
-
-
-#Starting
+#Start
 sudo systemctl start httpd
-
 sudo service httpd configtest
 sudo systemctl restart httpd
 sudo systemctl enable httpd
-
-
-sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+cd Api
+dotnet MobileEquations.WebApi.dll & disown
