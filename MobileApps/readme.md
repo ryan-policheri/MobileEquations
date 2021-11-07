@@ -1,0 +1,1 @@
+All mobile clients go in this directory, we only plan on making android though
