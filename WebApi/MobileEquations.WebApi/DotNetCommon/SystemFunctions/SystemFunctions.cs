@@ -86,6 +86,11 @@ namespace DotNetCommon.SystemFunctions
             File.WriteAllBytes(file, bytes);
         }
 
+        public static void CreateFile(string file, string text)
+        {
+            File.WriteAllText(file, text);
+        }
+
         public static void OpenFile(string file)
         {
             Process.Start($"{_defaultSystemProcessFile} ", @"/c " + "\"" + file + "\"");

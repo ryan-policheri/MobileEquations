@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace MobileEquations.Model
 {
@@ -12,6 +8,7 @@ namespace MobileEquations.Model
 
         public string Extension { get; set; }
 
-        public byte[] bytes { get; set; }
+        [JsonIgnore]
+        public byte[] Bytes { get; set; }
     }
 }

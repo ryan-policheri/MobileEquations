@@ -11,10 +11,10 @@ namespace MobileEquations.WebApi
         {
             _rawConfig = rawConfig;
 
-            WorkingDirectory = _rawConfig[nameof(WorkingDirectory)]; //TODO: Autobind json to props
-            if (String.IsNullOrWhiteSpace(WorkingDirectory)) throw new ArgumentNullException(nameof(WorkingDirectory) + " cannot be empty");
+            FileDirectory = _rawConfig[nameof(FileDirectory)]; //TODO: Autobind json to props
+            if (String.IsNullOrWhiteSpace(FileDirectory)) throw new ArgumentNullException(nameof(FileDirectory) + " cannot be empty");
         }
 
-        public string WorkingDirectory { get; }
+        public string FileDirectory { get; }
     }
 }

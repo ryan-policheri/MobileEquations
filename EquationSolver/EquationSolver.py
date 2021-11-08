@@ -24,6 +24,7 @@ if len(args) < 3: #evidently the first argument has the program path in it autom
     sys.exit(constants.EXIT_ARGS_INCOMPLETE)
 
 inputFile = args[1] #so we start by grabbing the second arg
+print("Input File: " + inputFile)
 outputFile = args[2]
 
 inputData = ""
@@ -45,4 +46,5 @@ asJson = equation.toJSON()
 with open(outputFile, 'w') as file:
     file.write(asJson)
 
+print("Output File: " + outputFile)
 sys.exit(0)

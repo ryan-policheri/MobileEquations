@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using DotNetCommon.Constants;
 
 namespace DotNetCommon.Extensions
@@ -97,6 +98,11 @@ namespace DotNetCommon.Extensions
                 }
             }
             return builder.ToString();
+        }
+
+        public static string ToJson(this object source)
+        {
+            return JsonSerializer.Serialize(source);
         }
 
         public static bool TrySetValueWithTypeRespect(this PropertyInfo property, object instance, string rawValue)

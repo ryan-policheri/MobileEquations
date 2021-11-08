@@ -17,7 +17,7 @@ namespace MobileEquations.WebApi.Extensions
             {
                 byte[] bytes = new byte[source.Length];
                 stream.Read(bytes, 0, (int)source.Length);
-                file.bytes = bytes;
+                file.Bytes = bytes;
             }
 
             return file;
