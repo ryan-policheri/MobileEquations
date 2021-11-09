@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DotNetCommon.Extensions
 {
@@ -16,6 +17,21 @@ namespace DotNetCommon.Extensions
         {
             if (array == null) return -1;
             return array.Length - 1;
+        }
+
+        public static string ToDelimitedList(this IEnumerable<string> list, char delimiter = ',')
+        {
+            string delimitedList = string.Empty;
+            foreach (string s in list)
+            {
+                delimitedList = delimitedList + s + delimiter;
+            }
+            if (delimitedList.Length > 0)
+            {
+                delimitedList = delimitedList.TrimEnd(delimiter);
+            }
+
+            return delimitedList;
         }
     }
 

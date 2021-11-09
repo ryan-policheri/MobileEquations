@@ -67,10 +67,10 @@ namespace MobileEquations.WebApi.Controllers
                 SystemFunctions.CreateFile(photoPath, equation.Photo.Bytes);
                 SystemFunctions.CreateFile(inputFile, equation.ToJson());
 
-                string args = $"{_config.EquationSolverScript.Quotify()} {inputFile.Quotify()} {outputFile.Quotify()}";
-                if (!_config.EquationSolverIsPackaged) args = $"{_config.PythonExecutable.Quotify()} " + args; //Executing through python, add python as the first argument
-                _logger.LogInformation($"Executing the following args: {args}");
-                SystemFunctions.RunSystemProcess(args);
+                ICollection<string> args = new List<string>() { _config.EquationSolverScript, inputFile, outputFile };
+                if (!_config.EquationSolverIsPackaged) args.Prepend(_config.PythonExecutable); //Executing through python, add python as the first argument
+                _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
+                SystemFunctions.RunSystemProcess(args.ToArray());
 
                 string output = SystemFunctions.ReadAllText(outputFile);
                 equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);

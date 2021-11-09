@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using DotNetCommon.Extensions;
 
 namespace DotNetCommon.SystemFunctions
 {
     public class SystemFunctions
     {
-        private static string _systemProcessFile
+        private static string SystemProcessFile
         {
             get
             {
@@ -21,7 +19,7 @@ namespace DotNetCommon.SystemFunctions
             }
         }
 
-        private static string _systemProcessArgParameter
+        private static string SystemProcessArgParameter
         {
             get
             {
@@ -31,11 +29,56 @@ namespace DotNetCommon.SystemFunctions
             }
         }
 
-        private static readonly char _pathChar = Path.DirectorySeparatorChar;
+        private static readonly char PathChar = Path.DirectorySeparatorChar;
+
+        private static string WrapSystemArgs(string[] args)
+        {
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                string argString = "";
+                foreach (string arg in args)
+                {
+                    argString += arg.Quotify() + " ";
+                }
+                argString = argString.TrimEnd();
+                return SystemProcessArgParameter + " " + argString.Quotify();
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                string argString = "";
+                foreach (string arg in args)
+                {
+                    argString += "\\\"" + arg.Quotify() + "\\\" ";
+                }
+                argString = argString.TrimEnd();
+                return SystemProcessArgParameter + " " + argString.Quotify();
+            }
+            else throw new PlatformNotSupportedException();
+        }
+
+        public static void RunSystemProcess(string[] args, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
+        {
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.WindowStyle = ProcessWindowStyle.Normal;
+            startInfo.UseShellExecute = false;
+            startInfo.FileName = SystemProcessFile;
+            string wrappedArgs = WrapSystemArgs(args);
+            startInfo.Arguments = wrappedArgs;
+            if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace)) wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
+                throw new Exception("An error occured while executing the following process: " + SystemProcessFile + " " + wrappedArgs + ". The exit code was " + process.ExitCode);
+            }
+        }
 
         public static void RunSystemProcess(string arguments, string workingDirectory = null, string senstiveCommandInfoToReplace = null)
         {
-            RunCustomProcess(_systemProcessFile, arguments, workingDirectory, senstiveCommandInfoToReplace);
+            RunCustomProcess(SystemProcessFile, arguments, workingDirectory, senstiveCommandInfoToReplace);
         }
 
         public static void RunCustomProcess(string processFile, string arguments, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
@@ -45,7 +88,7 @@ namespace DotNetCommon.SystemFunctions
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             startInfo.UseShellExecute = false;
             startInfo.FileName = processFile;
-            startInfo.Arguments = processFile.StartsWith(_systemProcessFile) ? $"{_systemProcessArgParameter} " + arguments.Quotify() : arguments;
+            startInfo.Arguments = processFile.StartsWith(SystemProcessFile) ? $"{SystemProcessArgParameter} " + arguments.Quotify() : arguments;
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
             process.StartInfo = startInfo;
             process.Start();
@@ -92,7 +135,7 @@ namespace DotNetCommon.SystemFunctions
         public static string RenameFile(string file, string newFileName)
         {
             FileInfo fileInfo = new FileInfo(file);
-            string newFile = $"{fileInfo.Directory}{_pathChar}{newFileName}{fileInfo.Extension}";
+            string newFile = $"{fileInfo.Directory}{PathChar}{newFileName}{fileInfo.Extension}";
             File.Move(file, newFile);
             return newFile;
         }
@@ -115,7 +158,7 @@ namespace DotNetCommon.SystemFunctions
 
         public static void OpenFile(string file)
         {
-            Process.Start($"{_systemProcessFile} ", @"/c " + "\"" + file + "\"");
+            Process.Start($"{SystemProcessFile} ", $"{SystemProcessArgParameter} " + "\"" + file + "\"");
         }
 
         public static string ReadAllText(string file)
@@ -130,7 +173,7 @@ namespace DotNetCommon.SystemFunctions
             foreach (string file in files)
             {
                 FileInfo fileInfo = new FileInfo(file);
-                string newFile = $"{targetDirectory}{_pathChar}{fileInfo.Name}";
+                string newFile = $"{targetDirectory}{PathChar}{fileInfo.Name}";
                 File.Copy(file, newFile);
             }
 
@@ -138,15 +181,15 @@ namespace DotNetCommon.SystemFunctions
 
             foreach (string directory in directories)
             {
-                string subDirectory = directory.Split(_pathChar).Last();
-                string targetSubDirectory = $"{targetDirectory}{_pathChar}{subDirectory}";
+                string subDirectory = directory.Split(PathChar).Last();
+                string targetSubDirectory = $"{targetDirectory}{PathChar}{subDirectory}";
                 CopyDirectory(directory, targetSubDirectory);
             }
         }
 
         public static string CombineDirectoryComponents(string directory, string directoryOrFile)
         {
-            return directory.TrimEnd(_pathChar) + _pathChar + directoryOrFile.TrimStart(_pathChar);
+            return directory.TrimEnd(PathChar) + PathChar + directoryOrFile.TrimStart(PathChar);
         }
 
         public static string CombineDirectoryComponents(string directory1, string directory2, string directoryOrFile)
