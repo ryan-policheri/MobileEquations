@@ -42,7 +42,7 @@ namespace MobileEquations.WebApi.Controllers
             try
             {
                 _logger.LogInformation($"Calling {_config.PythonExecutable.Quotify()}");
-                SystemFunctions.RunCustomProcess($"{_config.PythonExecutable.Quotify()}", null);
+                SystemFunctions.RunCustomProcess($"{_config.PythonExecutable.Quotify()}", "--version");
                 return true;
             }
             catch (Exception exception)
