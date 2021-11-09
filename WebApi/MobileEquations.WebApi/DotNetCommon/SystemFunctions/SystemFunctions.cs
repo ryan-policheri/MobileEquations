@@ -48,7 +48,7 @@ namespace DotNetCommon.SystemFunctions
                 string argString = "";
                 foreach (string arg in args)
                 {
-                    argString += "\\\"" + arg.Quotify() + "\\\" ";
+                    argString += "\\" + arg.Quotify() + "\\ ";
                 }
                 argString = argString.TrimEnd();
                 return SystemProcessArgParameter + " " + argString.Quotify();
