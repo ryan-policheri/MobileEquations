@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DotNetCommon.Constants;
 using DotNetCommon.Extensions;
 using DotNetCommon.SystemFunctions;
+using Microsoft.Extensions.Logging;
 using MobileEquations.Model;
 using MobileEquations.WebApi.Extensions;
 using MobileEquations.WebApi.ModelBinding;
@@ -20,11 +21,13 @@ namespace MobileEquations.WebApi.Controllers
     {
         private readonly Config _config;
         private readonly string _solveRequestsPath;
+        private readonly ILogger<EquationsController> _logger;
 
-        public EquationsController(Config config)
+        public EquationsController(Config config, ILogger<EquationsController> logger)
         {
             _config = config;
             _solveRequestsPath = _config.SolveRequestsDirectory;
+            _logger = logger;
             SystemFunctions.CreateDirectory(_solveRequestsPath);
         }
 
@@ -45,6 +48,7 @@ namespace MobileEquations.WebApi.Controllers
             SystemFunctions.CreateFile(inputFile, equation.ToJson());
 
             string command = $"\"{_config.EquationSolverScript}\" \"{inputFile}\" \"{outputFile}\"";
+            _logger.LogInformation("Calling Equation Solver with the following command: " + command);
             SystemFunctions.RunCustomProcess($"\"{_config.PythonExecutable}\"", command);
             string output = SystemFunctions.ReadAllText(outputFile);
             equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
