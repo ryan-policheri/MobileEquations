@@ -3,36 +3,57 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using DotNetCommon.Extensions;
 
 namespace DotNetCommon.SystemFunctions
 {
     public class SystemFunctions
     {
-        private const string _defaultSystemProcessFile = "cmd.exe";
-        private static readonly char _pathChar = Path.DirectorySeparatorChar;
-
-        public static void RunSystemProcess(string commandString, string workingDirectory = null, string senstiveCommandInfoToReplace = null)
+        private static string _systemProcessFile
         {
-            RunCustomProcess(_defaultSystemProcessFile, commandString, workingDirectory, senstiveCommandInfoToReplace);
+            get
+            {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "cmd.exe";
+                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "/bin/bash";
+                else throw new PlatformNotSupportedException();
+            }
         }
 
-        public static void RunCustomProcess(string processFile, string parameters, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
+        private static string _systemProcessArgParameter
+        {
+            get
+            {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "/C";
+                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "-c";
+                else throw new PlatformNotSupportedException();
+            }
+        }
+
+        private static readonly char _pathChar = Path.DirectorySeparatorChar;
+
+        public static void RunSystemProcess(string arguments, string workingDirectory = null, string senstiveCommandInfoToReplace = null)
+        {
+            RunCustomProcess(_systemProcessFile, arguments, workingDirectory, senstiveCommandInfoToReplace);
+        }
+
+        public static void RunCustomProcess(string processFile, string arguments, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
         {
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             startInfo.UseShellExecute = false;
             startInfo.FileName = processFile;
-            startInfo.Arguments = processFile.StartsWith(_defaultSystemProcessFile) ? "/C " + parameters : parameters;
+            startInfo.Arguments = processFile.StartsWith(_systemProcessFile) ? $"{_systemProcessArgParameter} " + arguments.Quotify() : arguments;
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace)) parameters = parameters.Replace(senstiveParameterInfoToReplace, "***");
-                throw new Exception("An error occured while executing the following process: " + processFile + " " + parameters + ". The exit code was " + process.ExitCode);
+                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace)) arguments = arguments.Replace(senstiveParameterInfoToReplace, "***");
+                throw new Exception("An error occured while executing the following process: " + processFile + " " + arguments + ". The exit code was " + process.ExitCode);
             }
         }
 
@@ -94,7 +115,7 @@ namespace DotNetCommon.SystemFunctions
 
         public static void OpenFile(string file)
         {
-            Process.Start($"{_defaultSystemProcessFile} ", @"/c " + "\"" + file + "\"");
+            Process.Start($"{_systemProcessFile} ", @"/c " + "\"" + file + "\"");
         }
 
         public static string ReadAllText(string file)
