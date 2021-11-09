@@ -35,6 +35,24 @@ namespace MobileEquations.WebApi.Controllers
         [Route("Ping")]
         public bool Ping() => true;
 
+        [HttpGet]
+        [Route("PingPython")]
+        public bool PingPython()
+        {
+            try
+            {
+                string command = $"{_config.EquationSolverScript.Quotify()} {inputFile.Quotify()} {outputFile.Quotify()}";
+                _logger.LogInformation($"Calling {_config.PythonExecutable.Quotify()}");
+                SystemFunctions.RunCustomProcess($"{_config.PythonExecutable.Quotify()}", null);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, exception.Message);
+                throw;
+            }
+        }
+
         [HttpPost]
         public Equation Solve([ModelBinder(BinderType = typeof(JsonModelBinder))] Equation equation, IFormFile photo)
         {
