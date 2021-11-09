@@ -96,6 +96,11 @@ namespace DotNetCommon.SystemFunctions
             Process.Start($"{_defaultSystemProcessFile} ", @"/c " + "\"" + file + "\"");
         }
 
+        public static string ReadAllText(string file)
+        {
+            return File.ReadAllText(file);
+        }
+
         public static void CopyDirectory(string sourceDirectory, string targetDirectory)
         {
             Directory.CreateDirectory(targetDirectory);

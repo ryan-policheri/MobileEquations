@@ -13,11 +13,6 @@ namespace DotNetCommon.Extensions
             return Activator.CreateInstance(source);
         }
 
-        public static IEnumerable<PropertyInfo> GetProperTies(this Type source)
-        {
-            return source.GetProperties().ToArray();
-        }
-
         public static bool HasCloseMatchingProperty(this Type source, string nameToMatchTo)
         {
             return !String.IsNullOrWhiteSpace(source.GetCloseMatchPropertyName(nameToMatchTo));

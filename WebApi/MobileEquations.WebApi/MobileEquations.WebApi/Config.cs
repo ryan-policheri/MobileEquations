@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using DotNetCommon.Extensions;
 using Microsoft.Extensions.Configuration;
 
 namespace MobileEquations.WebApi
@@ -11,10 +13,19 @@ namespace MobileEquations.WebApi
         {
             _rawConfig = rawConfig;
 
-            FileDirectory = _rawConfig[nameof(FileDirectory)]; //TODO: Autobind json to props
-            if (String.IsNullOrWhiteSpace(FileDirectory)) throw new ArgumentNullException(nameof(FileDirectory) + " cannot be empty");
+            //Autobinding appsettings data to the strongly-typed properties of this object
+            IEnumerable<PropertyInfo> props = typeof(Config).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                string rawValue = _rawConfig[prop.Name];
+                prop.SetValueWithTypeRespect(this, rawValue);
+            }
         }
 
-        public string FileDirectory { get; }
+        public string SolveRequestsDirectory { get; set; }
+
+        public string EquationSolverScript { get; set; }
+
+        public string PythonExecutable { get; set; }
     }
 }

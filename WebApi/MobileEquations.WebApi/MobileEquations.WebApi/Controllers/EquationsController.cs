@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetCommon.Constants;
 using DotNetCommon.Extensions;
 using DotNetCommon.SystemFunctions;
 using MobileEquations.Model;
@@ -23,7 +24,7 @@ namespace MobileEquations.WebApi.Controllers
         public EquationsController(Config config)
         {
             _config = config;
-            _solveRequestsPath = SystemFunctions.CombineDirectoryComponents(_config.FileDirectory, "EquationSolveRequests");
+            _solveRequestsPath = _config.SolveRequestsDirectory;
             SystemFunctions.CreateDirectory(_solveRequestsPath);
         }
 
@@ -32,7 +33,7 @@ namespace MobileEquations.WebApi.Controllers
         public bool Ping() => true;
 
         [HttpPost]
-        public string Solve([ModelBinder(BinderType = typeof(JsonModelBinder))] Equation equation, IFormFile photo)
+        public Equation Solve([ModelBinder(BinderType = typeof(JsonModelBinder))] Equation equation, IFormFile photo)
         {
             equation.Photo = photo.ToInMemoryFile();
             string requestDirectory = CreateRequestDirectory();
@@ -43,9 +44,12 @@ namespace MobileEquations.WebApi.Controllers
             SystemFunctions.CreateFile(photoPath, equation.Photo.Bytes);
             SystemFunctions.CreateFile(inputFile, equation.ToJson());
 
-            string command = "C:\\Users\\Ryan-\\source\\repos\\MobileEquations\\EquationSolver\\EquationSolver.py \"C:\\Users\\Ryan-\\EquationPhotos\\test.json\" \"C:\\Users\\Ryan-\\EquationPhotos\\testout.json\"";
-            SystemFunctions.RunCustomProcess("C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\python", command);
-            return "The solution to your equation 9 + 4 = 13";
+            string command = $"\"{_config.EquationSolverScript}\" \"{inputFile}\" \"{outputFile}\"";
+            SystemFunctions.RunCustomProcess($"\"{_config.PythonExecutable}\"", command);
+            string output = SystemFunctions.ReadAllText(outputFile);
+            equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
+
+            return equation;
         }
 
         private string CreateRequestDirectory()

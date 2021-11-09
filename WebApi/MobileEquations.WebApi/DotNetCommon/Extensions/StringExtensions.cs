@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 
 namespace DotNetCommon.Extensions
 {
@@ -33,6 +34,16 @@ namespace DotNetCommon.Extensions
         {
             if (source == null) return null;
             return "\"" + source + "\"";
+        }
+
+        public static T ConvertJsonToObject<T>(this string source)
+        {
+            return JsonSerializer.Deserialize<T>(source);
+        }
+
+        public static T ConvertJsonToObject<T>(this string source, JsonSerializerOptions options)
+        {
+            return JsonSerializer.Deserialize<T>(source, options);
         }
     }
 }

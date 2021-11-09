@@ -39,7 +39,7 @@ except Exception as ex:
     print("Unhandled error")
     print(ex)
     
-imagePath = inputData["imagePath"]
+imagePath = inputData["Photo"]["FileName"]
 equation = solveEquation(imagePath)
 asJson = equation.toJSON()
 
