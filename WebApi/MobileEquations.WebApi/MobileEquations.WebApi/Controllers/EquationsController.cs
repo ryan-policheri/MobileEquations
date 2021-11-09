@@ -48,7 +48,7 @@ namespace MobileEquations.WebApi.Controllers
             SystemFunctions.CreateFile(inputFile, equation.ToJson());
 
             string command = $"\"{_config.EquationSolverScript}\" \"{inputFile}\" \"{outputFile}\"";
-            _logger.LogInformation("Calling Equation Solver with the following command: " + command);
+            _logger.LogInformation($"Calling \"{_config.PythonExecutable}\" with the following command: {command}");
             SystemFunctions.RunCustomProcess($"\"{_config.PythonExecutable}\"", command);
             string output = SystemFunctions.ReadAllText(outputFile);
             equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
