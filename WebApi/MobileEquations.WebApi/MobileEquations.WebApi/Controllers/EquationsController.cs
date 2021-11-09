@@ -41,7 +41,6 @@ namespace MobileEquations.WebApi.Controllers
         {
             try
             {
-                string command = $"{_config.EquationSolverScript.Quotify()} {inputFile.Quotify()} {outputFile.Quotify()}";
                 _logger.LogInformation($"Calling {_config.PythonExecutable.Quotify()}");
                 SystemFunctions.RunCustomProcess($"{_config.PythonExecutable.Quotify()}", null);
                 return true;
