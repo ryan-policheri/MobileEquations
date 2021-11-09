@@ -26,6 +26,8 @@ namespace MobileEquations.WebApi
 
         public string EquationSolverScript { get; set; }
 
+        public bool EquationSolverIsPackaged { get; set; }
+
         public string PythonExecutable { get; set; }
     }
 }

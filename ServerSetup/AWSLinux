@@ -10,10 +10,11 @@ cd ..
 
 #Install Python
 sudo yum install python3 -y
-sudo yum install pip -y
+sudo yum install pip3 -y
+pip3 install pyinstaller
 
-#Deploy Python Script
-cp -R Repos/MobileEquations/EquationSolver ~/
+#Deploy Python Program
+pyinstaller ~/Repos/MobileEquations/EquationSolver/EquationSolver.py --onefile --distpath ~/EquationSolver/
 
 #Install .NET
 sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm

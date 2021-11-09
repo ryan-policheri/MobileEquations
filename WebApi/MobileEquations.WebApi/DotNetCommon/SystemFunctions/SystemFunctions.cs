@@ -22,7 +22,7 @@ namespace DotNetCommon.SystemFunctions
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
-            startInfo.UseShellExecute = true;
+            startInfo.UseShellExecute = false;
             startInfo.FileName = processFile;
             startInfo.Arguments = processFile.StartsWith(_defaultSystemProcessFile) ? "/C " + parameters : parameters;
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
