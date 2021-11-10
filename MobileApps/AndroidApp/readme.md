@@ -1,1 +1,0 @@
-Android app will go in this directory

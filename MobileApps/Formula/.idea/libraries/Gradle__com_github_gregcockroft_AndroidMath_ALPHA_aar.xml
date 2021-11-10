@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.gregcockroft:AndroidMath:ALPHA@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/e17d5662032440a84af0dcc8f3f7b811/transformed/jetified-AndroidMath-ALPHA/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e17d5662032440a84af0dcc8f3f7b811/transformed/jetified-AndroidMath-ALPHA/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e17d5662032440a84af0dcc8f3f7b811/transformed/jetified-AndroidMath-ALPHA/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
