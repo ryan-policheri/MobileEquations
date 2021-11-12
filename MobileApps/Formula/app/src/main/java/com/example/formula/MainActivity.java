@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.agog.mathdisplay.MTMathView;
+import com.alibaba.fastjson.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         dispatchTakePictureIntent();
         updateLatex("x = \\alpha^{\\sum}");
+    }
+
+    public void pingApi(View v) {
     }
 
     private void updateLatex(String text) {

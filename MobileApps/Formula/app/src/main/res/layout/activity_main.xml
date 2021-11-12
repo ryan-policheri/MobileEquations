@@ -28,6 +28,13 @@
             android:onClick="buttonStuff"
             android:text="Button" />
 
+        <Button
+            android:id="@+id/buttonPing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="pingApi"
+            android:text="Ping Api" />
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="158dp"
