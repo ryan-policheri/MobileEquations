@@ -36,16 +36,21 @@ public class CustomHttpClient {
     }
 
     private String readResponse(HttpURLConnection connection) throws IOException {
-        InputStream inputStream = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder response = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
+        try {
+            InputStream inputStream = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            reader.close();
+            return response.toString();
         }
-        reader.close();
-        return response.toString();
+        catch (Exception ex) {
+            return null;
+        }
     }
 
     private HttpURLConnection prepareConnection(String route, String method) throws IOException, InterruptedException {
@@ -66,7 +71,7 @@ public class CustomHttpClient {
     }
 
     private URL prepareUrl(String fullOrPartialUrl) throws MalformedURLException {
-        if (_baseUrl != null) {
+        if (_baseUrl == null) {
             URL url = new URL(fullOrPartialUrl); //assume full
             return url;
         }

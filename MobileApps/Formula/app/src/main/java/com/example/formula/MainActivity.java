@@ -13,6 +13,15 @@ import android.widget.TextView;
 
 import com.agog.mathdisplay.MTMathView;
 
+import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import edu.uiowa.common.webapiclient.CustomHttpClient;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -42,7 +51,18 @@ public class MainActivity extends AppCompatActivity {
         updateLatex("x = \\alpha^{\\sum}");
     }
 
-    public void pingApi(View v) {
+    public void pingApi(View v) throws IOException, InterruptedException, ExecutionException {
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        Future<Boolean> future = executor.submit(new Callable<Boolean>(){
+            @Override
+            public Boolean call() throws Exception {
+                CustomHttpClient client = new CustomHttpClient("http://52.204.181.13:9000/api/");
+                Boolean result = client.get(Boolean.class, "equations/ping");
+                return result;
+            }
+        });
+        Boolean result = future.get();
+        System.out.println(result);
     }
 
     private void updateLatex(String text) {
