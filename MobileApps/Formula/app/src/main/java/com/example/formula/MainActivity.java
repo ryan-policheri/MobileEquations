@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.agog.mathdisplay.MTMathView;
-import com.alibaba.fastjson.*;
 
 public class MainActivity extends AppCompatActivity {
 
