@@ -32,23 +32,23 @@ public class EquationService {
         return solution;
     }
 
-    public Equation solveEquation(Equation equation, Bitmap picture) {
+    public Equation solveEquation(Equation equation, Bitmap picture, String fileDir) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         picture.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] bytes = outputStream.toByteArray();
 
         try {
-            String uniqueFileName = UUID.randomUUID().toString() + ".png";
+            String uniqueFileName = fileDir + "/" + UUID.randomUUID().toString() + ".png";
             File file = new File(uniqueFileName);
             file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(bytes);
             fileOutputStream.close();
 
-
+            return _client.post(Equation.class, "", equation, file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 

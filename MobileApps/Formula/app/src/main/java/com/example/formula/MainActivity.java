@@ -143,8 +143,29 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView = (ImageView) this.findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
 
+            String fileDir = this.getFilesDir().getPath().toString();
             Equation equation = new Equation(buildClientInfo());
-            equation = _service.solveEquation(equation, imageBitmap);
+
+            RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
+                @Override
+                public void run() {
+                    try {
+                        Equation solvedEquation = _service.solveEquation(equation, imageBitmap, fileDir);
+                        this.postCallback(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(solvedEquation != null) _testPostCounter++;
+                                TextView pingText = (TextView) findViewById(R.id.textTestPost);
+                                pingText.setText("Post: " + _testPostCounter);
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            _executer.submit(action);
         }
     }
 
