@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Formula</string>
-    <string name="base_url">http://34.230.70.99/api/</string>
+    <string name="base_url">http://10.0.2.2:54688/api/</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.example.formula;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.BundleCompat;
 import androidx.core.os.HandlerCompat;
 
 import android.content.ActivityNotFoundException;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,32 +18,33 @@ import android.widget.TextView;
 import com.agog.mathdisplay.MTMathView;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import edu.uiowa.common.webapiclient.CustomHttpClient;
+import edu.uiowa.formula.model.Equation;
+import edu.uiowa.formula.services.EquationService;
 
 public class MainActivity extends AppCompatActivity {
-    protected final ExecutorService _service;
+    protected final ExecutorService _executer;
     protected final Handler _mainThreadHandler;
 
-    CustomHttpClient _client;
+    private EquationService _service;
     private int _pingCounter;
+    private int _testPostCounter;
 
     public MainActivity() {
-        _service = Executors.newFixedThreadPool(4);
+        _executer = Executors.newFixedThreadPool(4);
         _mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
         _pingCounter = 0;
+        _testPostCounter = 0;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String url = this.getString(R.string.base_url);
-        _client = new CustomHttpClient(url);
+        _service = new EquationService(url); //TODO: Use Factory
 
         setContentView(R.layout.activity_main);
         String default_text = "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}";
@@ -68,12 +69,12 @@ public class MainActivity extends AppCompatActivity {
         updateLatex("x = \\alpha^{\\sum}");
     }
 
-    public void pingApi(View v) throws IOException, InterruptedException, ExecutionException {
+    public void pingApi(View view) throws IOException, InterruptedException, ExecutionException {
         RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
             @Override
             public void run() {
                 try {
-                    Boolean result = _client.get(Boolean.class, "equations/ping");
+                    Boolean result = _service.pingController();
                     this.postCallback(new Runnable() {
                         @Override
                         public void run() {
@@ -88,7 +89,33 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        _service.submit(action);
+        _executer.submit(action);
+    }
+
+    public void testPost(View view) throws IOException, InterruptedException {
+        String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Equation equation = new Equation(android_id);
+
+        RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
+            @Override
+            public void run() {
+                try {
+                    Equation solvedEquation = _service.solveEquation(equation);
+                    this.postCallback(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(solvedEquation != null) _pingCounter++;
+                            TextView pingText = (TextView) findViewById(R.id.textTestPost);
+                            pingText.setText("Post: " + _pingCounter);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        _executer.submit(action);
     }
 
     private void updateLatex(String text) {

@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class CustomHttpClient {
@@ -35,7 +38,35 @@ public class CustomHttpClient {
         return obj;
     }
 
-    private String readResponse(HttpURLConnection connection) throws IOException {
+    public <T> T post(Class<T> generic, String route, Object payload) throws IOException, InterruptedException {
+        HttpURLConnection connection = prepareConnection(route, POST);
+        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+        connection.setRequestProperty("Accept", "application/json");
+        writePayload(connection, payload);
+        String response = readResponse(connection);
+        T obj = JSON.parseObject(response, generic);
+        return obj;
+    }
+
+    private void writePayload(HttpURLConnection connection, Object payload) throws IOException, InterruptedException {
+        connection.setDoOutput(true);
+        try(DataOutputStream writer = new DataOutputStream( connection.getOutputStream()))
+        {
+            String json = JSON.toJSONString(payload);
+            byte[] bytes = json.getBytes(StandardCharsets.UTF_8 );
+            writer.write(bytes);
+        }
+        catch (IOException ex) {
+            if (_retryCount > 3) throw ex;
+            else {
+                _retryCount++;
+                Thread.sleep(100);
+                writePayload(connection, payload);
+            }
+        }
+    }
+
+    private String readResponse(HttpURLConnection connection) throws IOException, InterruptedException {
         try {
             InputStream inputStream = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -51,7 +82,9 @@ public class CustomHttpClient {
         catch (IOException ex) {
             if (_retryCount > 3) throw ex;
             else {
-                return null;
+                _retryCount++;
+                Thread.sleep(100);
+                return readResponse(connection);
             }
         }
     }

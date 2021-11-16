@@ -34,6 +34,21 @@
                 android:id="@+id/textPing"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Hello World!"
+                android:layout_marginRight="10dp"/>
+
+            <Button
+                android:id="@+id/buttonTestPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="testPost"
+                android:text="Test Post"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/textTestPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Hello World!" />
         </LinearLayout>
 

@@ -52,6 +52,20 @@ namespace MobileEquations.WebApi.Controllers
             }
         }
 
+        [HttpPost("TestSimplePost")]
+        public Equation TestPost(Equation equation) //This is just here so i can test a normal post (I.E. one without a file)
+        {
+            equation.ProcessedEquation = new ProcessedEquation
+            {
+                Equation = "Foo",
+                Solution = "bar",
+                SolvedEquation = "Foobar",
+                LaTeX = "@FOOBAR"
+            };
+
+            return equation;
+        }
+
         [HttpPost]
         public Equation Solve([ModelBinder(BinderType = typeof(JsonModelBinder))] Equation equation, IFormFile photo)
         {
