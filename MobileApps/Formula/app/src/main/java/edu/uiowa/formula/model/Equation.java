@@ -4,8 +4,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class Equation {
 
-    @JSONField(name="client")
-    private String _client;
+    @JSONField(name="clientInfo")
+    private ClientInfo _clientInfo;
 
     @JSONField(name="processedEquation")
     private ProcessedEquation _processedEquation;
@@ -14,16 +14,16 @@ public class Equation {
 
     }
 
-    public Equation(String client) {
-        _client = client;
+    public Equation(ClientInfo clientInfo) {
+        _clientInfo = clientInfo;
     }
 
-    public String get_client() {
-        return _client;
+    public ClientInfo get_clientInfo() {
+        return _clientInfo;
     }
 
-    public void set_client(String _client) {
-        this._client = _client;
+    public void set_clientInfo(ClientInfo _client) {
+        this._clientInfo = _client;
     }
 
     public ProcessedEquation get_processedEquation() {

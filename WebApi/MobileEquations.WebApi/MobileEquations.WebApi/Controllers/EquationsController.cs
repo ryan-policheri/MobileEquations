@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using DotNetCommon.Constants;
 using DotNetCommon.Extensions;
 using DotNetCommon.SystemFunctions;
@@ -53,7 +51,7 @@ namespace MobileEquations.WebApi.Controllers
         }
 
         [HttpPost("TestSimplePost")]
-        public Equation TestPost(Equation equation) //This is just here so i can test a normal post (I.E. one without a file)
+        public Equation TestPost([FromBody] Equation equation) //This is just here so i can test a normal post (I.E. one without a file)
         {
             equation.ProcessedEquation = new ProcessedEquation
             {

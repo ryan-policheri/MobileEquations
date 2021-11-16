@@ -6,22 +6,31 @@ import androidx.core.os.HandlerCompat;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.agog.mathdisplay.MTMathView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.uiowa.formula.model.ClientInfo;
 import edu.uiowa.formula.model.Equation;
 import edu.uiowa.formula.services.EquationService;
 
@@ -54,20 +63,6 @@ public class MainActivity extends AppCompatActivity {
         mathview.setFontSize(100);
         mathview.setLatex(default_text);
     }
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            // display error state to the user
-        }
-    }
-    public void buttonStuff(View v) {
-        dispatchTakePictureIntent();
-        updateLatex("x = \\alpha^{\\sum}");
-    }
 
     public void pingApi(View view) throws IOException, InterruptedException, ExecutionException {
         RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
@@ -93,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testPost(View view) throws IOException, InterruptedException {
-        String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Equation equation = new Equation(android_id);
+        Equation equation = new Equation(buildClientInfo());
 
         RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
             @Override
@@ -104,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
                     this.postCallback(new Runnable() {
                         @Override
                         public void run() {
-                            if(solvedEquation != null) _pingCounter++;
+                            if(solvedEquation != null) _testPostCounter++;
                             TextView pingText = (TextView) findViewById(R.id.textTestPost);
-                            pingText.setText("Post: " + _pingCounter);
+                            pingText.setText("Post: " + _testPostCounter);
                         }
                     });
                 } catch (Exception e) {
@@ -116,6 +110,21 @@ public class MainActivity extends AppCompatActivity {
         };
 
         _executer.submit(action);
+    }
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+        }
+    }
+    public void buttonStuff(View v) {
+        dispatchTakePictureIntent();
+        updateLatex("x = \\alpha^{\\sum}");
     }
 
     private void updateLatex(String text) {
@@ -133,6 +142,14 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = (ImageView) this.findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
+
+            Equation equation = new Equation(buildClientInfo());
+            equation = _service.solveEquation(equation, imageBitmap);
         }
+    }
+
+    private ClientInfo buildClientInfo(){
+        String androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        return new ClientInfo(androidId, Build.VERSION.BASE_OS, Build.VERSION.SDK_INT, Build.VERSION.RELEASE);
     }
 }
