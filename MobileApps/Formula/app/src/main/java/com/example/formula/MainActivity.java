@@ -1,11 +1,15 @@
 package com.example.formula;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.BundleCompat;
+import androidx.core.os.HandlerCompat;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,10 +27,24 @@ import java.util.concurrent.Future;
 import edu.uiowa.common.webapiclient.CustomHttpClient;
 
 public class MainActivity extends AppCompatActivity {
+    protected final ExecutorService _service;
+    protected final Handler _mainThreadHandler;
+
+    CustomHttpClient _client;
+    private int _pingCounter;
+
+    public MainActivity() {
+        _service = Executors.newFixedThreadPool(4);
+        _mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
+        _pingCounter = 0;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String url = this.getString(R.string.base_url);
+        _client = new CustomHttpClient(url);
+
         setContentView(R.layout.activity_main);
         String default_text = "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}";
         MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
@@ -46,23 +64,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void buttonStuff(View v) {
-
         dispatchTakePictureIntent();
         updateLatex("x = \\alpha^{\\sum}");
     }
 
     public void pingApi(View v) throws IOException, InterruptedException, ExecutionException {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        Future<Boolean> future = executor.submit(new Callable<Boolean>(){
+        RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
             @Override
-            public Boolean call() throws Exception {
-                CustomHttpClient client = new CustomHttpClient("http://52.204.181.13:9000/api/");
-                Boolean result = client.get(Boolean.class, "equations/ping");
-                return result;
+            public void run() {
+                try {
+                    Boolean result = _client.get(Boolean.class, "equations/ping");
+                    this.postCallback(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(result) _pingCounter++;
+                            TextView pingText = (TextView) findViewById(R.id.textPing);
+                            pingText.setText("Ping: " + _pingCounter);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        });
-        Boolean result = future.get();
-        System.out.println(result);
+        };
+
+        _service.submit(action);
     }
 
     private void updateLatex(String text) {

@@ -48,8 +48,11 @@ public class CustomHttpClient {
             reader.close();
             return response.toString();
         }
-        catch (Exception ex) {
-            return null;
+        catch (IOException ex) {
+            if (_retryCount > 3) throw ex;
+            else {
+                return null;
+            }
         }
     }
 
