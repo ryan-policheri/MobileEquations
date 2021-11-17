@@ -56,12 +56,7 @@ public class MainActivity extends AppCompatActivity {
         _service = new EquationService(url); //TODO: Use Factory
 
         setContentView(R.layout.activity_main);
-        String default_text = "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}";
-        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
-        TextView latex_text = (TextView) this.findViewById(R.id.description);
-        latex_text.setText(default_text);
-        mathview.setFontSize(100);
-        mathview.setLatex(default_text);
+        updateLatex("x = \\alpha^{\\sum}");
     }
 
     public void pingApi(View view) throws IOException, InterruptedException, ExecutionException {
@@ -114,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    public void onTakePhoto(View v) {
+        dispatchTakePictureIntent();
+    }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -121,17 +120,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (ActivityNotFoundException e) {
             // display error state to the user
         }
-    }
-    public void buttonStuff(View v) {
-        dispatchTakePictureIntent();
-        updateLatex("x = \\alpha^{\\sum}");
-    }
-
-    private void updateLatex(String text) {
-        TextView latex_text = (TextView) this.findViewById(R.id.description);
-        latex_text.setText(text);
-        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
-        mathview.setLatex(text);
     }
 
     @Override
@@ -154,9 +142,9 @@ public class MainActivity extends AppCompatActivity {
                         this.postCallback(new Runnable() {
                             @Override
                             public void run() {
-                                if(solvedEquation != null) _testPostCounter++;
-                                TextView pingText = (TextView) findViewById(R.id.textTestPost);
-                                pingText.setText("Post: " + _testPostCounter);
+                                if (solvedEquation != null) {
+                                    updateLatex(solvedEquation.get_processedEquation().get_laTex());
+                                }
                             }
                         });
                     } catch (Exception e) {
@@ -167,6 +155,14 @@ public class MainActivity extends AppCompatActivity {
 
             _executer.submit(action);
         }
+    }
+
+    private void updateLatex(String text) {
+        TextView latex_text = (TextView) this.findViewById(R.id.description);
+        latex_text.setText(text);
+        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
+        mathview.setLatex(text);
+        mathview.setFontSize(100);
     }
 
     private ClientInfo buildClientInfo(){

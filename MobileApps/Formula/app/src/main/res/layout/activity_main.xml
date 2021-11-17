@@ -56,8 +56,8 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="buttonStuff"
-            android:text="Button" />
+            android:onClick="onTakePhoto"
+            android:text="Take Photo" />
 
         <ImageView
             android:id="@+id/imageView"
