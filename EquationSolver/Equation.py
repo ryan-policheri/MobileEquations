@@ -11,4 +11,4 @@ class Equation:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def buildLaTeX(self):
-        return "foobar" #not sure what valid LaTeX looks like
+        return "x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"
