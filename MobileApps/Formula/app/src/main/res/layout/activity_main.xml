@@ -7,7 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -16,17 +15,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!" />
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/buttonPing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="pingApi"
+                android:text="Ping Api"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/textPing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!"
+                android:layout_marginRight="10dp"/>
+
+            <Button
+                android:id="@+id/buttonTestPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="testPost"
+                android:text="Test Post"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:id="@+id/textTestPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="buttonStuff"
-            android:text="Button" />
+            android:onClick="onTakePhoto"
+            android:text="Take Photo" />
 
         <ImageView
             android:id="@+id/imageView"

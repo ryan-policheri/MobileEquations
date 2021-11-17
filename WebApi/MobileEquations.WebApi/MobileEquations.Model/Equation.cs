@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace MobileEquations.Model
+﻿namespace MobileEquations.Model
 {
     public class Equation
     {
-        public string Client { get; set; }
+        public ClientInfo ClientInfo { get; set; }
 
         public InMemoryFile Photo { get; set; }
 
