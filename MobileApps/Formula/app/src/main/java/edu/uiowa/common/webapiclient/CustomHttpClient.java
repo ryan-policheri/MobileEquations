@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,32 +55,13 @@ public class CustomHttpClient {
     }
 
     public <T> T post(Class<T> generic, String route, Object payload, File file) throws IOException, InterruptedException {
-        HttpURLConnection connection = prepareConnection(route, POST);
-        connection.setRequestProperty("Content-Type", "multipart/form-data; utf-8");
-        connection.setDoOutput(true);
-
-        try(DataOutputStream writer = new DataOutputStream(connection.getOutputStream()))
-        {
-            String jsonFormField = "Content-Disposition: form-data; name=\"jsonString\"\r\n" +
-                    "Content-Type: text/plain; charset=" + "utf-8\r\n" +
-                    JSON.toJSONString(payload);
-            byte[] bytes = jsonFormField.getBytes(StandardCharsets.UTF_8);
-            writer.write(bytes);
-
-            String fileFormField = "Content-Disposition: form-data; name=\"file\";" + "filename=\"" + file.getName() + "\"\r\n" +
-                    "Content-Type: " + URLConnection.guessContentTypeFromName(file.getName()) + "\r\n" +
-                    "Content-Transfer-Encoding: binary\r\n";
-            bytes = fileFormField.getBytes(StandardCharsets.UTF_8);
-            writer.write(bytes);
-
-            FileInputStream inputStream = new FileInputStream(file);
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                writer.write(buffer, 0, bytesRead);
-            }
-
-            String response = readResponse(connection);
+        try {
+            Map<String, String> headers = new HashMap<>();
+            String url = prepareUrl(route).toString();
+            MultipartUtility multipart = new MultipartUtility(url, "utf-8", headers);
+            multipart.addFormField("jsonString", JSON.toJSONString(payload));
+            multipart.addFilePart("file", file);
+            String response = multipart.finish();
             T obj = JSON.parseObject(response, generic);
             return obj;
         }
