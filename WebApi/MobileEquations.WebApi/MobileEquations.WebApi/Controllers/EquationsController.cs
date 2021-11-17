@@ -65,11 +65,11 @@ namespace MobileEquations.WebApi.Controllers
         }
 
         [HttpPost]
-        public Equation Solve([ModelBinder(BinderType = typeof(JsonModelBinder))] Equation equation, IFormFile photo)
+        public Equation Solve([ModelBinder(BinderType = typeof(JsonFormFieldToModelBinder))] Equation equation, IFormFile file)
         {
             try
             {
-                equation.Photo = photo.ToInMemoryFile();
+                equation.Photo = file.ToInMemoryFile();
 
                 string requestDirectory = CreateRequestDirectory();
                 string photoPath = SystemFunctions.CombineDirectoryComponents(requestDirectory, equation.Photo.FileName);

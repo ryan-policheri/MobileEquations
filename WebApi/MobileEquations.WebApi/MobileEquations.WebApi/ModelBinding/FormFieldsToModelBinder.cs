@@ -3,11 +3,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DotNetCommon.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using MobileEquations.Model;
 
 namespace MobileEquations.WebApi.ModelBinding
 {//https://stackoverflow.com/questions/41367602/upload-files-and-json-in-asp-net-core-web-api
-    public class JsonModelBinder : IModelBinder
+    public class FormFieldsToModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {

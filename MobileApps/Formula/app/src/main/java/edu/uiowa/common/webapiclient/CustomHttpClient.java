@@ -67,8 +67,7 @@ public class CustomHttpClient {
 
             String fileFormField = "Content-Disposition: form-data; name=\"file\";" + "filename=\"" + file.getName() + "\"\r\n" +
                     "Content-Type: " + URLConnection.guessContentTypeFromName(file.getName()) + "\r\n" +
-                    "Content-Transfer-Encoding: binary\r\n" +
-                    "";
+                    "Content-Transfer-Encoding: binary\r\n";
             bytes = fileFormField.getBytes(StandardCharsets.UTF_8);
             writer.write(bytes);
 
