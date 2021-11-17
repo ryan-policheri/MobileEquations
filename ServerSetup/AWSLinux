@@ -38,5 +38,9 @@ sudo systemctl start httpd
 sudo service httpd configtest
 sudo systemctl restart httpd
 sudo systemctl enable httpd
-cd Api
-dotnet MobileEquations.WebApi.dll & disown
+
+#Start Api
+cd Repos/MobileEquations/ServerSetup/
+sudo systemctl enable /home/user-1/Repos/MobileEquations/ServerSetup/ServiceSpec.service
+sudo systemctl start ServiceSpec.service
+sudo systemctl status ServiceSpec.service
