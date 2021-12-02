@@ -4,6 +4,7 @@ import random
 
 import constants
 from Equation import Equation
+import ImageProcessor
 
 def solveEquation(filePath):
     print("Doing complex things...")
@@ -40,6 +41,8 @@ except Exception as ex:
     print(ex)
     
 imagePath = inputData["Photo"]["FileName"]
+
+
 equation = solveEquation(imagePath)
 asJson = equation.toJSON()
 
