@@ -12,6 +12,8 @@ cd ..
 sudo yum install python3 -y
 sudo yum install pip3 -y
 pip3 install pyinstaller
+pip3 install tensorflow
+pip3 install scikit-image
 
 #Deploy Python Program
 mkdir EquationSolver
