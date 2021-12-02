@@ -28,6 +28,9 @@ def main():
     equation = equation_constructor(characters)
     print("Equation: {}".format(equation))
 
+    hardcodedJsonForTesting = "{ \"equation\": \"20 + 7 = \", \"solution\": \"8\",  \"solvedEquation\": \"20 + 7 = 8\", \"laTeX\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2-4ac}}{2a}\" }"
+    with open(output_file, 'w') as file:
+        file.write(hardcodedJsonForTesting)
     print("Equation is solved is located at \"{}\"".format(output_file))
 
 

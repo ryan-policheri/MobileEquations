@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using DotNetCommon.Constants;
 using DotNetCommon.Extensions;
 using DotNetCommon.SystemFunctions;
 using Microsoft.Extensions.Logging;
 using MobileEquations.Model;
 using MobileEquations.WebApi.Extensions;
 using MobileEquations.WebApi.ModelBinding;
+using MobileEquations.Services;
 
 namespace MobileEquations.WebApi.Controllers
 {
@@ -17,16 +15,15 @@ namespace MobileEquations.WebApi.Controllers
     [ApiController]
     public class EquationsController : ControllerBase
     {
-        private readonly Config _config;
-        private readonly string _solveRequestsPath;
+        private readonly ApiConfig _config;
+        private readonly EquationSolverService _equationService;
         private readonly ILogger<EquationsController> _logger;
 
-        public EquationsController(Config config, ILogger<EquationsController> logger)
+        public EquationsController(ApiConfig config, EquationSolverService equationService, ILogger<EquationsController> logger)
         {
             _config = config;
-            _solveRequestsPath = _config.SolveRequestsDirectory;
+            _equationService = equationService;
             _logger = logger;
-            SystemFunctions.CreateDirectory(_solveRequestsPath);
         }
 
         [HttpGet]
@@ -70,24 +67,9 @@ namespace MobileEquations.WebApi.Controllers
             try
             {
                 equation.Photo = file.ToInMemoryFile();
-
                 string requestDirectory = CreateRequestDirectory();
-                string photoPath = SystemFunctions.CombineDirectoryComponents(requestDirectory, equation.Photo.FileName);
-                string inputFile = SystemFunctions.CombineDirectoryComponents(requestDirectory, "Input.json");
-                string outputFile = SystemFunctions.CombineDirectoryComponents(requestDirectory, "Output.json");
+                return _equationService.SolveEquation(requestDirectory, equation);
 
-                SystemFunctions.CreateFile(photoPath, equation.Photo.Bytes);
-                SystemFunctions.CreateFile(inputFile, equation.ToJson());
-
-                ICollection<string> args = new List<string>() { _config.EquationSolverScript, inputFile, outputFile };
-                if (!_config.EquationSolverIsPackaged) args.Prepend(_config.PythonExecutable); //Executing through python, add python as the first argument
-                _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
-                SystemFunctions.RunSystemProcess(args.ToArray());
-
-                string output = SystemFunctions.ReadAllText(outputFile);
-                equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
-
-                return equation;
             }
             catch (Exception exception)
             {
@@ -99,7 +81,7 @@ namespace MobileEquations.WebApi.Controllers
         private string CreateRequestDirectory()
         {
             string uniqueId = SystemFunctions.GetDateTimeAsFileNameSafeString() + Guid.NewGuid().ToString().Substring(0, 4);
-            string requestDirectory = SystemFunctions.CombineDirectoryComponents(_solveRequestsPath, uniqueId);
+            string requestDirectory = SystemFunctions.CombineDirectoryComponents(_config.SolveRequestsDirectory, uniqueId);
             SystemFunctions.CreateDirectory(requestDirectory);
             return requestDirectory;
         }
