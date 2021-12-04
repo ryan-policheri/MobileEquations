@@ -10,11 +10,11 @@
 
         public string Answer { get; set; }
 
-        public double PythonRuntimeSystem { get; set; }
+        public double PythonSystemRuntimeInMilliseconds { get; set; }
 
-        public long PythonRuntimeDotNet { get; set; }
+        public long PythonDotNetRuntimeInMilliseconds { get; set; }
 
-        public long DotNetRuntime { get; set; }
+        public long DotNetServiceRuntimeInMilliseconds { get; set; }
 
         public long ApiRuntimeInMilliseconds { get; set; }
     }

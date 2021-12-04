@@ -21,15 +21,13 @@ namespace MobileEquations.Benchmarker
         private readonly BenchmarkerConfig _config;
         private readonly EquationSolverService _equationService;
         private readonly MobileEquationsClient _client;
-        private readonly ExcelService _excelService;
         private readonly ILogger<BenchmarkProcessor> _logger;
 
-        public BenchmarkProcessor(BenchmarkerConfig config, EquationSolverService equationService, MobileEquationsClient client, ExcelService excelService, ILogger<BenchmarkProcessor> logger)
+        public BenchmarkProcessor(BenchmarkerConfig config, EquationSolverService equationService, MobileEquationsClient client, ILogger<BenchmarkProcessor> logger)
         {
             _config = config;
             _equationService = equationService;
             _client = client;
-            _excelService = excelService;
             _logger = logger;
         }
 
@@ -55,8 +53,8 @@ namespace MobileEquations.Benchmarker
             _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
             ProcessStats stats = null;
             long runtime = ExecuteWithTiming(() => stats = SystemFunctions.RunSystemProcess(args.ToArray(), _config.BenchmarkDatasetDirectory));
-            trial.PythonRuntimeSystem = stats.MillisecondsEllapsed;
-            trial.PythonRuntimeDotNet = runtime;
+            trial.PythonSystemRuntimeInMilliseconds = stats.MillisecondsEllapsed;
+            trial.PythonDotNetRuntimeInMilliseconds = runtime;
             SystemFunctions.DeleteFile(SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "Result.json"));
         }
 
@@ -67,7 +65,7 @@ namespace MobileEquations.Benchmarker
             equation.Photo = info.ToInMemoryFile();
             string tempDir = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "temp");
             SystemFunctions.CreateDirectory(tempDir);
-            trial.DotNetRuntime = ExecuteWithTiming(() => _equationService.SolveEquation(tempDir, equation));
+            trial.DotNetServiceRuntimeInMilliseconds = ExecuteWithTiming(() => _equationService.SolveEquation(tempDir, equation));
             SystemFunctions.DeleteDirectory(tempDir);
         }
 
