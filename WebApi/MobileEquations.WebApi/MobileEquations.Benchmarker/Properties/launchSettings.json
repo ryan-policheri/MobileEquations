@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MobileEquations.Benchmarker": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
