@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DotNetCommon.WebApiClient
@@ -90,6 +92,23 @@ namespace DotNetCommon.WebApiClient
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string uri, TRequest data, Func<HttpResponseMessage, Task<TResponse>> func)
         {
             return await PostAsync(uri, data, null, func);
+        }
+
+        public async Task<T> PostDataAndFile<T>(string uri, T obj, string filePath)
+        {
+            FileInfo info = new FileInfo(filePath);
+
+            using (MultipartFormDataContent content = new MultipartFormDataContent("Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)))
+            {
+                content.Add(new StreamContent(File.OpenRead(filePath)), "file", info.Name);
+                StringContent stringContent = new StringContent(JsonSerializer.Serialize<T>(obj));
+                content.Add(stringContent, "jsonString");
+
+                using (HttpResponseMessage response = await Client.PostAsync(uri, content))
+                {
+                    return await response.AsAsync<T>(SerializerOptions);
+                }
+            }
         }
 
         public async Task<T> PutAsync<T>(string uri, T data, IDictionary<string, string> headers = null)

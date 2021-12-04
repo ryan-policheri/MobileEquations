@@ -22,6 +22,8 @@ namespace MobileEquations.Benchmarker
                 string rawValue = _rawConfig[prop.Name];
                 prop.SetValueWithTypeRespect(this, rawValue);
             }
+
+            SolveRequestsDirectory = this.BenchmarkDatasetDirectory;
         }
 
         public string BenchmarkDatasetDirectory { get; set; }
