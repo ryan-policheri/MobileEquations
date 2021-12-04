@@ -33,7 +33,7 @@ namespace MobileEquations.Benchmarker
             _logger = logger;
         }
 
-        public void Run()
+        public IEnumerable<Trial> Run()
         {
             IEnumerable<Trial> trials = GetTrials();
 
@@ -45,7 +45,7 @@ namespace MobileEquations.Benchmarker
                 ExecuteThroughApi(trial);
             }
 
-            Console.Write("break");
+            return trials;
         }
 
         private void ExecuteThroughPython(Trial trial)

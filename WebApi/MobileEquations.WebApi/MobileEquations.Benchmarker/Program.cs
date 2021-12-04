@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MobileEquations.Benchmarker
@@ -10,7 +11,8 @@ namespace MobileEquations.Benchmarker
             IServiceProvider provider = Bootstrapper.BuildServiceProvider(Bootstrapper.LoadConfiguration());
             BenchmarkProcessor processor = provider.GetRequiredService<BenchmarkProcessor>();
 
-            processor.Run();
+            IEnumerable<Trial> trials = processor.Run();
+            TrialReporter reporter = new TrialReporter(trials);
         }
     }
 }
