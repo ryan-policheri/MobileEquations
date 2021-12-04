@@ -89,10 +89,13 @@ namespace MobileEquations.Benchmarker
             TableWithMeta tableWithMeta = new TableWithMeta();
             DataTable table = new DataTable();
             table.Columns.Add("File Name");
-            table.Columns.Add("Runtime (ms)");
+            table.Columns.Add("Python Runtime (ms) (OS Measured)");
+            table.Columns.Add("Python Runtime (ms) (DotNet Measured)");
+            table.Columns.Add("DotNet Service Runtime (ms)");
+            table.Columns.Add("Api Service Runtime (ms)");
             table.Columns.Add("Accuracy");
 
-            foreach (Trial trial in Trials)
+            foreach (Trial trial in trials)
             {
                 DataRow row = table.NewRow();
                 row["File Name"] = trial.FileName;
@@ -100,6 +103,7 @@ namespace MobileEquations.Benchmarker
                 row["Python Runtime (ms) (DotNet Measured)"] = trial.PythonDotNetRuntimeInMilliseconds;
                 row["DotNet Service Runtime (ms)"] = trial.DotNetServiceRuntimeInMilliseconds;
                 row["Api Service Runtime (ms)"] = trial.ApiRuntimeInMilliseconds;
+                row["Accuracy"] = 0;
                 table.Rows.Add(row);
             }
 

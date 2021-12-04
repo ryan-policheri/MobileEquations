@@ -31,7 +31,7 @@ namespace MobileEquations.Benchmarker
             _logger = logger;
         }
 
-        public IEnumerable<Trial> Run()
+        public async Task<IEnumerable<Trial>> RunAsync()
         {
             IEnumerable<Trial> trials = GetTrials();
 
@@ -40,7 +40,7 @@ namespace MobileEquations.Benchmarker
                 trial.FilePath = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, trial.FileName);
                 ExecuteThroughPython(trial);
                 ExecuteThroughDotNet(trial);
-                ExecuteThroughApi(trial);
+                await ExecuteThroughApi(trial);
             }
 
             return trials;
@@ -69,7 +69,7 @@ namespace MobileEquations.Benchmarker
             SystemFunctions.DeleteDirectory(tempDir);
         }
 
-        private async void ExecuteThroughApi(Trial trial)
+        private async Task ExecuteThroughApi(Trial trial)
         {
             try
             {
