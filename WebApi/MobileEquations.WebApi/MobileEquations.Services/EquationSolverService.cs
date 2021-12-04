@@ -34,6 +34,7 @@ namespace MobileEquations.Services
 
             string output = SystemFunctions.ReadAllText(outputFilePath);
             equation.ProcessedEquation = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
+            equation.ProcessedEquation.FilePath = outputFilePath;
 
             return equation;
         }

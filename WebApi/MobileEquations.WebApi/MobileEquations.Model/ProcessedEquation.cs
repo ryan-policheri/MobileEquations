@@ -9,5 +9,7 @@
         public string SolvedEquation { get; set; }
 
         public string LaTeX { get; set; }
+
+        public string FilePath { get; set; }
     }
 }

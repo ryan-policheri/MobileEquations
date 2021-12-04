@@ -117,6 +117,7 @@ namespace DotNetCommon.Extensions
 
         public static void SetValueWithTypeRespect(this PropertyInfo property, object instance, string rawValue)
         {
+            if (!property.CanWrite) return;
             Type propertyType = property.PropertyType;
 
             if (propertyType == typeof(string)) property.SetValue(instance, rawValue);

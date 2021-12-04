@@ -56,7 +56,7 @@ namespace DotNetCommon.SystemFunctions
             else throw new PlatformNotSupportedException();
         }
 
-        public static void RunSystemProcess(string[] args, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
+        public static ProcessStats RunSystemProcess(string[] args, string workingDirectory = null, string senstiveParameterInfoToReplace = null)
         {
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -71,9 +71,12 @@ namespace DotNetCommon.SystemFunctions
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace)) wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
-                throw new Exception("An error occured while executing the following process: " + SystemProcessFile + " " + wrappedArgs + ". The exit code was " + process.ExitCode);
+                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace))
+                    wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
+                throw new Exception("An error occured while executing the following process: " + SystemProcessFile +
+                                    " " + wrappedArgs + ". The exit code was " + process.ExitCode);
             }
+            else return new ProcessStats(process.StartTime, process.ExitTime, true);
         }
 
         public static void RunSystemProcess(string arguments, string workingDirectory = null, string senstiveCommandInfoToReplace = null)
