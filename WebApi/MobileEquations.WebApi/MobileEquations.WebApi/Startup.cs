@@ -34,7 +34,7 @@ namespace MobileEquations.WebApi
             services.AddSingleton<ApiConfig>(config);
 
             string fileDirectory = config.FileLoggerDirectory;
-            string fileName = $"EIADataViewerLog_{DateTime.Today.Year}-{DateTime.Today.Month}-{DateTime.Today.Day}.log";
+            string fileName = $"MobileEquationsWebApiLog_{DateTime.Today.Year}-{DateTime.Today.Month}-{DateTime.Today.Day}.log";
             FileLoggerConfig fileLoggerConfig = new FileLoggerConfig(fileDirectory, fileName);
             FileLoggerProvider fileLoggerProvider = new FileLoggerProvider(fileLoggerConfig);
 
