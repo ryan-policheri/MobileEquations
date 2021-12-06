@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace DotNetCommon.Logging.File
 {
@@ -7,13 +9,13 @@ namespace DotNetCommon.Logging.File
 
         public FileLoggerConfig(string logFileDirectory, string logFileName)
         {
-            LogFileDirectory = logFileDirectory.TrimEnd('\\');
+            LogFileDirectory = logFileDirectory.TrimEnd(Path.DirectorySeparatorChar);
             LogFileName = logFileName;
         }
 
         public string LogFileDirectory { get; }
         public string LogFileName { get; }
-        public string LogFileFullPath => LogFileDirectory + "\\" + LogFileName;
+        public string LogFileFullPath => LogFileDirectory + Path.DirectorySeparatorChar + LogFileName;
 
         public bool CanLog(LogLevel logLevel)
         {

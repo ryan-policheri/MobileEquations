@@ -12,13 +12,13 @@ cd ..
 sudo yum install python3 -y
 sudo yum install pip3 -y
 pip3 install pyinstaller
-pip3 install tensorflow
+pip3 install --no-cache-dir tensorflow
 pip3 install scikit-image
 
 #Deploy Python Program
 mkdir EquationSolver
 cd EquationSolver
-pyinstaller ~/Repos/MobileEquations/EquationSolver/EquationSolver.py --onefile
+pyinstaller ~/Repos/MobileEquations/EquationSolver/equation_solver.py --onefile
 cd ..
 
 #Install .NET
@@ -28,7 +28,7 @@ sudo yum install dotnet-sdk-5.0 -y
 
 #Build Api
 mkdir Api
-dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi --output Api
+dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.WebApi --output Api
 
 #Install and Configure Web Server
 sudo yum install httpd -y
@@ -46,3 +46,8 @@ cd Repos/MobileEquations/ServerSetup/
 sudo systemctl enable /home/user-1/Repos/MobileEquations/ServerSetup/ServiceSpec.service
 sudo systemctl start ServiceSpec.service
 sudo systemctl status ServiceSpec.service
+
+#Make Benchmarker
+cd ~
+mkdir Benchmarker
+dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker --output Benchmarker
