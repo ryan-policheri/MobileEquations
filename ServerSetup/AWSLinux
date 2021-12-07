@@ -14,6 +14,7 @@ sudo yum install pip3 -y
 pip3 install pyinstaller
 pip3 install --no-cache-dir tensorflow
 pip3 install scikit-image
+pip3 install matplotlib
 
 #Deploy Python Program
 mkdir EquationSolver
@@ -51,3 +52,8 @@ sudo systemctl status ServiceSpec.service
 cd ~
 mkdir Benchmarker
 dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker --output Benchmarker
+
+#Copy Files, Testing, Other
+scp -i "C:\Users\Ryan-\.ssh\cs4630-0007.cs4630-2021fall.aws.cloud.uiowa.edu_1" -r C:\Users\Ryan-\PythonBuild\python-build user-1@cs4630-0007.cs4630-2021fall.aws.cloud.uiowa.edu:/home/user-1/EquationSolver
+
+/bin/bash -c "\"/home/user-1/EquationSolver/dist/equation_solver\" \"/home/user-1/Files/EquationSolveRequests/12.06.2021 11-56 PMf4d4/IMG_0290.JPG\""
