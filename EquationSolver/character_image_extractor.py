@@ -26,7 +26,13 @@ def is_contained(boxes, box):
         if pot_x_min < x_min and  x_max < pot_x_max and pot_y_min < y_min and  y_max < pot_y_max:
             return True
     return False
-
+def is_small(image, box, margin):
+    height, width = image.shape
+    x_min, x_max, y_min, y_max = box
+    box_height = x_max - x_min
+    box_width = y_max - y_min
+    return (box_height * box_width)/(height * width) < margin
+    
 def search_same_line(boxes, box):
     line_box = []
     x_min, x_max, y_min, y_max = box
@@ -43,7 +49,7 @@ def character_image_extractor(image):
     gray_img = rgb2gray(image)
 
     # get the edges of the text
-    contours = find_contours(gray_img, 0.5)
+    contours = find_contours(gray_img, 0.7)
     bounding_boxes = []
     
     # find the bounding box of the text
@@ -57,7 +63,11 @@ def character_image_extractor(image):
         
     # remove any box that would be contained within another
     # there are issues with 8 and 9 where the inner circles would be their own contour
-    bounding_boxes = list(filter(lambda x: not is_contained(bounding_boxes, x), bounding_boxes))
+    bounding_boxes = list(filter(lambda x: not (is_contained(bounding_boxes, x) or is_small(with_boxes, x)), bounding_boxes))
+    
+    # remove any tiny boxes that result from noise
+    # this will avoid issues if there is a small speck close to the center and will avoid unneccessary work from specks being sent to the model
+    bounding_boxes = list(filter(lambda x: not (is_small(with_boxes, x, 0.01)), bounding_boxes))
     
     # order boxes left to right
     sorted_boxes = sorted(bounding_boxes, key = lambda x: x[2])
