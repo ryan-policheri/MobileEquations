@@ -10,11 +10,6 @@ import numpy as np
 from skimage.transform import rescale, resize, downscale_local_mean
 from math import floor, ceil
 
-
-
-
-
-
 def is_contained(boxes, box):
     
     x_min, x_max, y_min, y_max = box
@@ -63,7 +58,7 @@ def character_image_extractor(image):
         
     # remove any box that would be contained within another
     # there are issues with 8 and 9 where the inner circles would be their own contour
-    bounding_boxes = list(filter(lambda x: not (is_contained(bounding_boxes, x) or is_small(with_boxes, x)), bounding_boxes))
+    bounding_boxes = list(filter(lambda x: not (is_contained(bounding_boxes, x)), bounding_boxes))
     
     # remove any tiny boxes that result from noise
     # this will avoid issues if there is a small speck close to the center and will avoid unneccessary work from specks being sent to the model
