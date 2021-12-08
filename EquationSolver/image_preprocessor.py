@@ -3,9 +3,7 @@ import sys
 from utilities.image.display import show
 
 import cv2 as cv
-import matplotlib.pyplot as plt
 import numpy as np
-import random
 
 
 def image_preprocessor(image_path):
