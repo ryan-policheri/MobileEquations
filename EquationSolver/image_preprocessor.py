@@ -20,8 +20,9 @@ def image_preprocessor(image_path):
     if text_color == "white":
         blur = np.bitwise_not(blur)
         
-    threshold = cv.adaptiveThreshold(blur, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 31, 5)
-        
+    threshold = cv.adaptiveThreshold(blur, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 501, 15)
+    threshold = np.bitwise_not(threshold)
+
     return threshold
 
 
