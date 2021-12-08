@@ -1,23 +1,31 @@
-import skimage.io
-import skimage.transform
-import skimage.util
+import sys
+
+from utilities.image.display import show
+
+import cv2 as cv
+import numpy as np
 
 
 def image_preprocessor(image_path):
-    print("Preprocessing image \"{}\"...".format(image_path))
-    
-    image = "preprocessed image"
-    
-    return image
+    image = cv.imread(image_path, 0)
+    blur = cv.medianBlur(image, 5)
 
-    image = skimage.io.imread(image_path, as_gray=True)
-    image = process_image(image)
+    # Black: 0, White: 255
+    median = np.median(blur)
+    maximum = np.max(blur)
+    minimum = np.min(blur)
+
+    text_color = "white" if abs(median - maximum) > abs(median - minimum) else "black"
+
+    if text_color == "white":
+        blur = np.bitwise_not(blur)
+        
+    threshold = cv.adaptiveThreshold(blur, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 501, 15)
+    threshold = np.bitwise_not(threshold)
+
+    return threshold
 
 
-def process_image(image):
-    image = skimage.util.invert(image)
-    image = skimage.transform.resize(image, (28, 28))
-    image = image.reshape(28, 28, 1)
-    image = image.astype("float32")
-
-    return image
+if __name__ == "__main__":
+    output = image_preprocessor(sys.argv[1])
+    show(output)
