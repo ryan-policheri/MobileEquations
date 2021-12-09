@@ -14,15 +14,10 @@ def main():
 
     # Preprocess the image to remove any artifacts and noise
     preprocessed_image = image_preprocessor(input_file)
-
     # Extract each character from the preprocessed image
     character_images = character_image_extractor(preprocessed_image)
-
     # Determine what each of the characters is
-    characters = list()
-    for character_image in character_images:
-        character = character_image_evaluator(character_image)
-        characters.append(character)
+    characters = character_image_evaluator(character_images)
 
     # Construct the equation
     equation = equation_constructor(characters)
