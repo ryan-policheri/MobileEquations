@@ -22,7 +22,7 @@ def main():
     equation = equation_constructor(characters)
     
     equation_latex = f"$${equation.replace('#'. '\\cdot')}$$"
-    equation_eval = equation.replace('#'. '*')
+    equation_eval = equation.replace('#', '*')
     print("Equation: {}".format(equation))
     solution = eval(equation_eval)
     hardcodedJsonForTesting ="{ \"equation\": \"20 + 7 = \", \"solution\": \"8\",  \"solvedEquation\": \"20 + 7 = 8\", \"laTeX\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2-4ac}}{2a}\" }"
