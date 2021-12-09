@@ -14,8 +14,10 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agog.mathdisplay.MTMathView;
 
@@ -37,10 +39,11 @@ import edu.uiowa.formula.services.EquationService;
 public class MainActivity extends AppCompatActivity {
     protected final ExecutorService _executer;
     protected final Handler _mainThreadHandler;
-
     private EquationService _service;
+
     private int _pingCounter;
     private int _testPostCounter;
+    private Bitmap _image;
 
     public MainActivity() {
         _executer = Executors.newFixedThreadPool(4);
@@ -130,31 +133,36 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = (ImageView) this.findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
-
-            String fileDir = this.getFilesDir().getPath().toString();
-            Equation equation = new Equation(buildClientInfo());
-
-            RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
-                @Override
-                public void run() {
-                    try {
-                        Equation solvedEquation = _service.solveEquation(equation, imageBitmap, fileDir);
-                        this.postCallback(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (solvedEquation != null) {
-                                    updateLatex(solvedEquation.get_processedEquation().get_laTex());
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            _executer.submit(action);
+            _image = imageBitmap;
+            ((Button) findViewById(R.id.buttonAskAi)).setEnabled(true);
         }
+    }
+
+    public void askAi(View view) {
+        String fileDir = this.getFilesDir().getPath().toString();
+        Equation equation = new Equation(buildClientInfo());
+
+        RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
+            @Override
+            public void run() {
+                try {
+                    Equation solvedEquation = _service.solveEquation(equation, _image, fileDir);
+                    this.postCallback(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (solvedEquation != null) {
+                                updateLatex(solvedEquation.get_processedEquation().get_laTex());
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Unexpected Error", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        _executer.submit(action);
     }
 
     private void updateLatex(String text) {
