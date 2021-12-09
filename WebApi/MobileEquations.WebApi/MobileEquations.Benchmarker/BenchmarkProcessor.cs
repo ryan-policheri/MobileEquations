@@ -48,11 +48,13 @@ namespace MobileEquations.Benchmarker
 
         private void ExecuteThroughPython(Trial trial)
         {
-            ICollection<string> args = new List<string>() { _config.EquationSolverScript, trial.FileName, "Result.json" };
+            string imageFile = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, trial.FileName);
+            string resultFile = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "Result.json");
+            ICollection<string> args = new List<string>() { _config.EquationSolverScript, imageFile, resultFile };
             if (!_config.EquationSolverIsPackaged) args = args.Prepend(_config.PythonExecutable).ToList(); //Executing through python, add python as the first argument
             _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
             ProcessStats stats = null;
-            long runtime = ExecuteWithTiming(() => stats = SystemFunctions.RunSystemProcess(args.ToArray(), _config.BenchmarkDatasetDirectory));
+            long runtime = ExecuteWithTiming(() => stats = SystemFunctions.RunSystemProcess(args.ToArray(), _config.EquationSolverOwningDirectory));
             trial.PythonSystemRuntimeInMilliseconds = stats.MillisecondsEllapsed;
             trial.PythonDotNetRuntimeInMilliseconds = runtime;
             SystemFunctions.DeleteFile(SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "Result.json"));

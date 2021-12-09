@@ -1,4 +1,6 @@
-﻿namespace MobileEquations.Model
+﻿using System.IO;
+
+namespace MobileEquations.Model
 {
     public class BaseConfig
     {
@@ -8,6 +10,7 @@
 
         public string EquationSolverScript { get; set; }
 
+        public string EquationSolverOwningDirectory => new FileInfo(EquationSolverScript).DirectoryName;
         public bool EquationSolverIsPackaged { get; set; }
 
         public string PythonExecutable { get; set; }
