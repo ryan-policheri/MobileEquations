@@ -63,6 +63,6 @@ scp -i "C:\Users\Ryan-\.ssh\cs4630-0007.cs4630-2021fall.aws.cloud.uiowa.edu_1" -
 python utilities.py
 
 cp ./Configs/appsettings.api.json ./Api/appsettings.json
-cp ./Configs/appsettings.benchmark.json ./Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker/appsettings.json
+cp ./Configs/appsettings.benchmark.json ./Benchmarker/appsettings.json
 dotnet publish ./Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker/MobileEquations.Benchmarker.dll --output Benchmarker
 sudo systemctl enable /home/ec2-user/Configs/ServiceSpec.service
