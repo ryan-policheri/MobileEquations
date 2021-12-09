@@ -1,15 +1,16 @@
+import numpy as np
 from tensorflow import keras
 
 
-def character_image_evaluator(character_image):
-    print("Evaluating character image {}...".format(character_image))
-    return "char"
+def character_image_evaluator(character_images):
+    print("Evaluating character images...")
 
     model = keras.models.load_model("model")
-    image = np.asarray(image)
-    
-    predictions = model.predict(image)
-    predictions = predictions[1]
 
-    prediction = np.argmax(predictions)
-    print("Prediction: {}".format(prediction))
+    character_images = np.asarray(character_images)
+    character_images = np.reshape(character_images, (character_images.shape[0], 28, 28, 1))
+    
+    predictions = model.predict(character_images)
+    predictions = np.argmax(predictions, 1)
+
+    return predictions

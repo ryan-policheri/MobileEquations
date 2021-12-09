@@ -39,12 +39,12 @@ def search_same_line(boxes, box):
 
 
 def character_image_extractor(image):
-    print("Extracting character images from \"{}\"".format(image))
+    print("Extracting character images...")
+    
     character_images = list()
-    gray_img = rgb2gray(image)
 
     # get the edges of the text
-    contours = find_contours(gray_img, 0.7)
+    contours = find_contours(image, 0.7)
     bounding_boxes = []
     
     # find the bounding box of the text
@@ -61,13 +61,13 @@ def character_image_extractor(image):
     bounding_boxes = list(filter(lambda x: not (is_contained(bounding_boxes, x)), bounding_boxes))
     
     # remove any tiny boxes that result from noise
-    # this will avoid issues if there is a small speck close to the center and will avoid unneccessary work from specks being sent to the model
-    bounding_boxes = list(filter(lambda x: not (is_small(with_boxes, x, 0.01)), bounding_boxes))
+    # this will avoid issues if there is a small speck close to the center and will avoid unnecessary work from specks being sent to the model
+    bounding_boxes = list(filter(lambda x: not (is_small(image, x, 0.01)), bounding_boxes))
     
     # order boxes left to right
     sorted_boxes = sorted(bounding_boxes, key = lambda x: x[2])
 
-    x,y = gray_img.shape
+    x,y = image.shape
     
     # find the box that is closest to the center
     center_box = sorted(sorted_boxes, key = lambda z: (abs(x//2-(z[0]+z[1])//2) + abs(y//2 - (z[2]+z[3])//2)))[0]
@@ -78,7 +78,7 @@ def character_image_extractor(image):
     for box in search_same_line(sorted_boxes, center_box):
         box = list(map(round, box))
         # extract the part of the image within the box
-        focus_shape = gray_img[box[0]:box[1], box[2]:box[3]]
+        focus_shape = image[box[0]:box[1], box[2]:box[3]]
         x,y = focus_shape.shape
         x_y_diff = x-y
         scale = (1/max(x,y))*24

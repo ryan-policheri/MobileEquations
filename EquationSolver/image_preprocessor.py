@@ -1,12 +1,14 @@
 import sys
 
-from utilities.image.display import show
+from utilities import show
 
 import cv2 as cv
 import numpy as np
 
 
 def image_preprocessor(image_path):
+    print("Preprocessing image...")
+
     image = cv.imread(image_path, 0)
     blur = cv.medianBlur(image, 5)
 
