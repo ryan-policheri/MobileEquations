@@ -1,7 +1,7 @@
 def equation_constructor(characters):
     print("Combining characters into equation...")
 
-    characters = [str(character) for character in characters]
+    characters = [str(character) for character in characters if str(character)!= " "]
     equation = " ".join(characters)
     
     #this line removes any trailing operations
