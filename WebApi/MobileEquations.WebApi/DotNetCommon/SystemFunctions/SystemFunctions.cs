@@ -145,7 +145,7 @@ namespace DotNetCommon.SystemFunctions
 
         public static string GetDateTimeAsFileNameSafeString()
         {
-            string fileNameSafeDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm tt").Replace("/", ".").Replace(":", "-");
+            string fileNameSafeDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm tt").Replace("/", ".").Replace(":", "-").Replace(" ", "_");
             return fileNameSafeDateTime;
         }
 

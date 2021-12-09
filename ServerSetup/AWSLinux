@@ -66,3 +66,15 @@ cp ./Configs/appsettings.api.json ./Api/appsettings.json
 cp ./Configs/appsettings.benchmark.json ./Benchmarker/appsettings.json
 dotnet publish ./Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker/MobileEquations.Benchmarker.dll --output Benchmarker
 sudo systemctl enable /home/ec2-user/Configs/ServiceSpec.service
+
+#Redeploy
+cd ~/Repos/MobileEquations
+git pull
+cd ~
+rm Benchmarker -r
+rm Api -r
+dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.WebApi --output Api
+dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker --output Benchmarker
+cp ./Configs/appsettings.api.json ./Api/appsettings.json
+cp ./Configs/appsettings.benchmark.json ./Benchmarker/appsettings.json
+sudo systemctl restart ServiceSpec.service
