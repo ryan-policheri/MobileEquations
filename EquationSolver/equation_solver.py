@@ -25,7 +25,7 @@ def main():
     equation_latex = f"$${equation_latex}$$"
     equation_eval = equation.replace('#', '*')
     print("Equation: {}".format(equation))
-    solution = eval(equation_eval)
+    solution = eval(equation_eval.replace(' ', ''))
     hardcodedJsonForTesting ="{ \"equation\": \"20 + 7 = \", \"solution\": \"8\",  \"solvedEquation\": \"20 + 7 = 8\", \"laTeX\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2-4ac}}{2a}\" }"
     with open(output_file, 'w') as file:
         file.write(hardcodedJsonForTesting)
