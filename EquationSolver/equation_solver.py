@@ -21,7 +21,8 @@ def main():
     # Construct the equation
     equation = equation_constructor(characters)
     
-    equation_latex = f"$${equation.replace('#'. '\\cdot')}$$"
+    equation_latex = equation.replace('#', '\\cdot')
+    equation_latex = f"$${equation_latex}$$"
     equation_eval = equation.replace('#', '*')
     print("Equation: {}".format(equation))
     solution = eval(equation_eval)
