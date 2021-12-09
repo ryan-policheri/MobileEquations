@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/EquationSolver/model/variables/variables.index
+/EquationSolver/model/variables/variables.data-00000-of-00001
+/EquationSolver/model/saved_model.pb
+/EquationSolver/model/keras_metadata.pb
