@@ -56,12 +56,15 @@ namespace MobileEquations.Benchmarker
             _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
             ProcessStats stats = null;
             long runtime = ExecuteWithTiming(() => stats = SystemFunctions.RunSystemProcess(args.ToArray(), _config.EquationSolverOwningDirectory));
-            trial.PythonSystemRuntimeInMilliseconds = stats.MillisecondsEllapsed;
+            trial.PythonSystemRuntimeInMilliseconds = stats != null ? stats.MillisecondsEllapsed : runtime;
             trial.PythonDotNetRuntimeInMilliseconds = runtime;
 
-            string output = SystemFunctions.ReadAllText(resultFile);
-            ProcessedEquation processed = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
-            trial.ActualResult = processed;
+            if (File.Exists(resultFile))
+            {
+                string output = SystemFunctions.ReadAllText(resultFile);
+                ProcessedEquation processed = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
+                trial.ActualResult = processed;
+            }
             trial.InitializeAccuracy();
 
             SystemFunctions.DeleteFile(SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "Result.json"));
@@ -82,28 +85,22 @@ namespace MobileEquations.Benchmarker
 
         private async Task ExecuteThroughApi(Trial trial)
         {
-            try
-            {
-                Equation equation = new Equation();
-                FileInfo info = new FileInfo(trial.FilePath);
-                equation.Photo = info.ToInMemoryFile();
-                Equation solvedEquation = null;
-                trial.ApiRuntimeInMilliseconds = await ExecuteWithTimingAsync(async () => solvedEquation = await _client.SolveEquation(equation, trial.FilePath));
-                trial.ActualResult = solvedEquation.ProcessedEquation;
-                trial.InitializeAccuracy();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            Equation equation = new Equation();
+            FileInfo info = new FileInfo(trial.FilePath);
+            equation.Photo = info.ToInMemoryFile();
+            Equation solvedEquation = null;
+            trial.ApiRuntimeInMilliseconds = await ExecuteWithTimingAsync(async () => solvedEquation = await _client.SolveEquation(equation, trial.FilePath));
+            trial.ActualResult = solvedEquation?.ProcessedEquation;
+            trial.InitializeAccuracy();
         }
 
         private long ExecuteWithTiming(Action action)
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
-            action();
-            watch.Stop();
+            try { action(); }
+            catch (Exception ex) { /*EAT*/ }
+            finally { watch.Stop(); }
             return watch.ElapsedMilliseconds;
         }
 
@@ -111,8 +108,9 @@ namespace MobileEquations.Benchmarker
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
-            await action();
-            watch.Stop();
+            try { await action(); }
+            catch (Exception e) { /*EAT*/ }
+            finally { watch.Stop(); }
             return watch.ElapsedMilliseconds;
         }
 
