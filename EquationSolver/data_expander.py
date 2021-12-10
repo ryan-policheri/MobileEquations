@@ -1,5 +1,7 @@
 import sys
 
+from utilities import show
+
 from character_image_extractor import character_image_extractor
 from image_preprocessor import image_preprocessor
 import time
@@ -17,7 +19,7 @@ def main():
     # Preprocess the image to remove any artifacts and noise
     preprocessed_image = image_preprocessor(input_file)
     # Extract each character from the preprocessed image
-    character_images = character_image_extractor(preprocessed_image, full = True)
+    character_images = character_image_extractor(preprocessed_image, full=True)
     counter = 0
     print(len(character_images))
     for image in character_images:
