@@ -24,6 +24,7 @@ namespace MobileEquations.Benchmarker
             }
 
             SolveRequestsDirectory = this.BenchmarkDatasetDirectory;
+            if (User != null) SystemFunctions.User = User;
         }
 
         public string BenchmarkDatasetDirectory { get; set; }

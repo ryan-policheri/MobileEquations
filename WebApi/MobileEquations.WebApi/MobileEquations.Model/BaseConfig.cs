@@ -14,5 +14,7 @@ namespace MobileEquations.Model
         public bool EquationSolverIsPackaged { get; set; }
 
         public string PythonExecutable { get; set; }
+
+        public string User { get; set; }
     }
 }

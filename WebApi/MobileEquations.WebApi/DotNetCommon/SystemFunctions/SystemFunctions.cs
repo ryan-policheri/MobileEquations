@@ -9,6 +9,8 @@ namespace DotNetCommon.SystemFunctions
 {
     public class SystemFunctions
     {
+        public static string User { get; set; }
+
         private static string SystemProcessFile
         {
             get
@@ -63,6 +65,7 @@ namespace DotNetCommon.SystemFunctions
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             startInfo.UseShellExecute = false;
             startInfo.FileName = SystemProcessFile;
+            if (!String.IsNullOrWhiteSpace(User)) startInfo.UserName = SystemFunctions.User;
             string wrappedArgs = WrapSystemArgs(args);
             startInfo.Arguments = wrappedArgs;
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
@@ -74,7 +77,7 @@ namespace DotNetCommon.SystemFunctions
                 if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace))
                     wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
                 throw new Exception("An error occured while executing the following process: " + SystemProcessFile +
-                                    " " + wrappedArgs + ". The exit code was " + process.ExitCode);
+                                    " " + wrappedArgs + ". The exit code was " + process.ExitCode  +". The user was: " + SystemFunctions.User);
             }
             else return new ProcessStats(process.StartTime, process.ExitTime, true);
         }

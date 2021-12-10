@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using DotNetCommon.Extensions;
+using DotNetCommon.SystemFunctions;
 using Microsoft.Extensions.Configuration;
 using MobileEquations.Model;
 
@@ -21,6 +22,7 @@ namespace MobileEquations.WebApi
                 string rawValue = _rawConfig[prop.Name];
                 prop.SetValueWithTypeRespect(this, rawValue);
             }
+            if (User != null) SystemFunctions.User = User;
         }
     }
 }
