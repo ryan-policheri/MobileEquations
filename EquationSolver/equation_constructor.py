@@ -36,4 +36,14 @@ def equation_constructor(characters):
         
     equation = re.sub(r"0+([1-9])", trim_zeros, equation)
     
+    def add_space(m):
+        return f" {m.group(1)} {m.group(2)}"
+    def remove_space(m):
+        return f"{m.group(1)}"
+        
+    equation = re.sub(r"0+([1-9])", trim_zeros, equation)
+    equation = re.sub(r"([*#/])", add_space, equation)
+    equation = re.sub(r"([-+])([-+]*)", add_space, equation)
+    equation = re.sub(r"^ ([-+]) ", remove_space, equation)
+    
     return equation
