@@ -71,6 +71,7 @@ namespace DotNetCommon.SystemFunctions
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
             process.StartInfo = startInfo;
             process.Start();
+            DateTime startTime = process.StartTime; //do this up here for linux compatibility
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
@@ -79,7 +80,7 @@ namespace DotNetCommon.SystemFunctions
                 throw new Exception("An error occured while executing the following process: " + SystemProcessFile +
                                     " " + wrappedArgs + ". The exit code was " + process.ExitCode  +". The user was: " + SystemFunctions.User);
             }
-            else return new ProcessStats(process.StartTime, process.ExitTime, true);
+            else return new ProcessStats(startTime, process.ExitTime, true);
         }
 
         public static void RunSystemProcess(string arguments, string workingDirectory = null, string senstiveCommandInfoToReplace = null)
