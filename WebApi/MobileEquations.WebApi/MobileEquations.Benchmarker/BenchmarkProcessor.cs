@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DotNetCommon;
+using DotNetCommon.Constants;
 using DotNetCommon.Extensions;
 using DotNetCommon.SystemFunctions;
 using Microsoft.Extensions.Logging;
@@ -57,6 +58,12 @@ namespace MobileEquations.Benchmarker
             long runtime = ExecuteWithTiming(() => stats = SystemFunctions.RunSystemProcess(args.ToArray(), _config.EquationSolverOwningDirectory));
             trial.PythonSystemRuntimeInMilliseconds = stats.MillisecondsEllapsed;
             trial.PythonDotNetRuntimeInMilliseconds = runtime;
+
+            string output = SystemFunctions.ReadAllText(resultFile);
+            ProcessedEquation processed = output.ConvertJsonToObject<ProcessedEquation>(JsonSerializationOptions.CaseInsensitive);
+            trial.ActualResult = processed;
+            trial.InitializeAccuracy();
+
             SystemFunctions.DeleteFile(SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "Result.json"));
         }
 
@@ -68,6 +75,8 @@ namespace MobileEquations.Benchmarker
             string tempDir = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, "temp");
             SystemFunctions.CreateDirectory(tempDir);
             trial.DotNetServiceRuntimeInMilliseconds = ExecuteWithTiming(() => _equationService.SolveEquation(tempDir, equation));
+            trial.ActualResult = equation.ProcessedEquation;
+            trial.InitializeAccuracy();
             SystemFunctions.DeleteDirectory(tempDir);
         }
 
@@ -80,6 +89,8 @@ namespace MobileEquations.Benchmarker
                 equation.Photo = info.ToInMemoryFile();
                 Equation solvedEquation = null;
                 trial.ApiRuntimeInMilliseconds = await ExecuteWithTimingAsync(async () => solvedEquation = await _client.SolveEquation(equation, trial.FilePath));
+                trial.ActualResult = solvedEquation.ProcessedEquation;
+                trial.InitializeAccuracy();
             }
             catch (Exception ex)
             {

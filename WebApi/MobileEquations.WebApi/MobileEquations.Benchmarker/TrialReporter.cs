@@ -65,6 +65,7 @@ namespace MobileEquations.Benchmarker
             averagedTrial.PythonDotNetRuntimeInMilliseconds = (long)trials.Select(x => x.PythonDotNetRuntimeInMilliseconds).Average();
             averagedTrial.DotNetServiceRuntimeInMilliseconds = (long)trials.Select(x => x.DotNetServiceRuntimeInMilliseconds).Average();
             averagedTrial.ApiRuntimeInMilliseconds = (long)trials.Select(x => x.ApiRuntimeInMilliseconds).Average();
+            averagedTrial.Accuracy = trials.Select(x => x.Accuracy).Average();
 
             return averagedTrial;
         }
@@ -78,6 +79,7 @@ namespace MobileEquations.Benchmarker
             averagedTrial.PythonDotNetRuntimeInMilliseconds = (long)trials.Select(x => x.PythonDotNetRuntimeInMilliseconds).Average();
             averagedTrial.DotNetServiceRuntimeInMilliseconds = (long)trials.Select(x => x.DotNetServiceRuntimeInMilliseconds).Average();
             averagedTrial.ApiRuntimeInMilliseconds = (long)trials.Select(x => x.ApiRuntimeInMilliseconds).Average();
+            averagedTrial.Accuracy = trials.Select(x => x.Accuracy).Average();
 
             averagedTrial.FileName = "All Files";
 
@@ -103,7 +105,7 @@ namespace MobileEquations.Benchmarker
                 row["Python Runtime (ms) (DotNet Measured)"] = trial.PythonDotNetRuntimeInMilliseconds;
                 row["DotNet Service Runtime (ms)"] = trial.DotNetServiceRuntimeInMilliseconds;
                 row["Api Service Runtime (ms)"] = trial.ApiRuntimeInMilliseconds;
-                row["Accuracy"] = 0;
+                row["Accuracy"] = trial.Accuracy;
                 table.Rows.Add(row);
             }
 
