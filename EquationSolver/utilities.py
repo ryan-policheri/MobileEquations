@@ -18,13 +18,13 @@ def generate_neural_network():
     test_labels = labels[int(len(labels) * 0.8):]
 
     model = generate_model()
-    model.fit(train_images, train_labels, epochs=5, validation_data=(test_images, test_labels))
+    model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
     model.save("model")
     
 
 def load_dataset():
-    images = list()
-    labels = list()
+    custom_images = list()
+    custom_labels = list()
     for directory in os.listdir("data"):
         label_file = open("data/{}/label.csv".format(directory))
         label = np.asarray(label_file.readline().strip().split(","))
@@ -33,13 +33,26 @@ def load_dataset():
             if file != "label.csv":
                 image = cv.imread("data/{}/{}".format(directory, file), 0)
                 image = np.reshape(image, (28, 28, 1))
-                images.append(image)
-                labels.append(label)
+                custom_images.append(image)
+                custom_labels.append(label)
                 
-    images = np.asarray(images)
-    labels = np.asarray(labels)
+    custom_images = np.asarray(custom_images)
+    custom_labels = np.asarray(custom_labels)
 
-    images, labels = shuffle(images, labels)
+    custom_images, custom_labels = shuffle(custom_images, custom_labels)
+
+    (mnist_train_images, mnist__train_labels), (mnist_test_images, mnist_test_labels) = keras.datasets.mnist.load_data(path="mnist.npz")
+
+    mnist_train_images = np.reshape(mnist_train_images, (mnist_train_images.shape[0], 28, 28, 1))
+    mnist_test_images = np.reshape(mnist_test_images, (mnist_test_images.shape[0], 28, 28, 1))
+
+    mnist__train_labels = keras.utils.to_categorical(mnist__train_labels)
+    mnist__train_labels = np.pad(mnist__train_labels, (0, 5))
+    mnist_test_labels = keras.utils.to_categorical(mnist_test_labels)
+    mnist_test_labels = np.pad(mnist_test_labels, (0, 5))
+
+    images = np.concatenate((custom_images, mnist_train_images, mnist_test_images), axis=0)
+    labels = np.concatenate((custom_labels, mnist__train_labels[:60000], mnist_test_labels[:10000]), axis=0)
 
     return images, labels
 
