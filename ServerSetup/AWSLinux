@@ -56,6 +56,12 @@ cd ~
 mkdir Benchmarker
 dotnet publish Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker --output Benchmarker
 
+#EPPLUS
+sudo amazon-linux-extras install epel -y
+sudo yum install -y libgdiplus
+sudo yum install curl cabextract xorg-x11-font-utils fontconfig -y
+sudo yum install https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm -y
+
 #Copy Files, Testing, Other, Last minute make it work
 scp -i "C:\Users\Ryan-\.ssh\cs4630-0007.cs4630-2021fall.aws.cloud.uiowa.edu_1" -r C:\Users\Ryan-\PythonBuild\python-build user-1@cs4630-0007.cs4630-2021fall.aws.cloud.uiowa.edu:/home/user-1/EquationSolver
 
