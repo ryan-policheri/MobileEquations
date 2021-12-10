@@ -22,8 +22,6 @@ def image_preprocessor(image_path):
 
     if text_color == "white":
         blurred_image = np.bitwise_not(blurred_image)
-
-    print(np.mean(blurred_image), np.min(blurred_image))
         
     threshold = cv.adaptiveThreshold(blurred_image, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 51, 30)
     threshold = np.bitwise_not(threshold)
