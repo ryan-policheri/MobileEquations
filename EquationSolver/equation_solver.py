@@ -1,10 +1,10 @@
 import sys
+import json
 
 from character_image_evaluator import character_image_evaluator
 from character_image_extractor import character_image_extractor
 from equation_constructor import equation_constructor
 from image_preprocessor import image_preprocessor
-import json
 
 def main():
     input_file = sys.argv[1]
