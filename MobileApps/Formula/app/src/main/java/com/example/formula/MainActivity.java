@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         _service = new EquationService(url); //TODO: Use Factory
 
         setContentView(R.layout.activity_main);
-        updateLatex("x = \\alpha^{\\sum}");
     }
 
     public void pingApi(View view) throws IOException, InterruptedException, ExecutionException {
@@ -171,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
         MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
         mathview.setLatex(text);
         mathview.setFontSize(100);
+        mathview.setVisibility(View.VISIBLE);
+        ((Button) findViewById(R.id.buttonAskAi)).setEnabled(false);
     }
 
     private ClientInfo buildClientInfo(){
