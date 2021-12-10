@@ -17,6 +17,7 @@ pip3 install --no-cache-dir tensorflow
 pip3 install scikit-image
 pip3 install matplotlib
 pip3 install opencv-python
+pip3 install sklearn
 
 #Deploy Python Program
 mkdir EquationSolver
