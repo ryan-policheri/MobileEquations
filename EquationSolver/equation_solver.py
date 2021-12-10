@@ -4,7 +4,7 @@ from character_image_evaluator import character_image_evaluator
 from character_image_extractor import character_image_extractor
 from equation_constructor import equation_constructor
 from image_preprocessor import image_preprocessor
-
+import json
 
 def main():
     input_file = sys.argv[1]
@@ -22,11 +22,15 @@ def main():
     equation = equation_constructor(characters)
     
     equation_latex = equation.replace('#', '\\cdot')
-    equation_latex = f"$${equation_latex}$$"
     equation_eval = equation.replace('#', '*')
     print("Equation: {}".format(equation))
     solution = eval(equation_eval.replace(' ', ''))
-    hardcodedJsonForTesting ="{ \"equation\": \"20 + 7 = \", \"solution\": \"8\",  \"solvedEquation\": \"20 + 7 = 8\", \"laTeX\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2-4ac}}{2a}\" }"
+    equation_latex = f"$${equation_latex} = {solution}$$"
+    solved_equation = f"{equation_eval} = {solution}"
+    hardcodedJsonForTesting =json.dumps({"equation": equation_eval, 
+                    "solution": f"{solution}", 
+                    "solvedEquation": solved_equation,
+                    "laTeX": equation_latex})
     with open(output_file, 'w') as file:
         file.write(hardcodedJsonForTesting)
     print("Equation is solved is located at \"{}\"".format(output_file))
