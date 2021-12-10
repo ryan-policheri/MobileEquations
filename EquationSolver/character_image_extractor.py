@@ -37,6 +37,16 @@ def search_same_line(boxes, box):
             line_box.append(potential_box)
     return line_box
 
+def search_same_line_alt(boxes, box):
+    line_box = []
+    x_min, x_max, y_min, y_max = box
+    for potential_box in boxes:
+        pot_x_min, pot_x_max, pot_y_min, pot_y_max = potential_box
+        if (((pot_x_min + pot_x_max)/2 > x_min and  x_max > (pot_x_min + pot_x_max)/2)
+            or ((x_min + x_max)/2 > pot_x_min and pot_x_max  > (x_min + x_max)/2)):
+            line_box.append(potential_box)
+    return line_box
+
 
 def character_image_extractor(image, full = False):
     print("Extracting character images...")
@@ -74,7 +84,7 @@ def character_image_extractor(image, full = False):
 
     selection = sorted_boxes
     if not full:
-        selection = search_same_line(sorted_boxes, center_box)
+        selection = search_same_line_alt(sorted_boxes, center_box)
     # find all boxes within the same line roughly
     # filters based on the center of a box being 
     # within the somewhere within the height range of the searching box
