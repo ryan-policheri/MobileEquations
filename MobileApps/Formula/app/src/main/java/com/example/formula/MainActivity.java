@@ -167,10 +167,10 @@ public class MainActivity extends AppCompatActivity {
     private void updateLatex(String text) {
         TextView latex_text = (TextView) this.findViewById(R.id.description);
         latex_text.setText(text);
-        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
-        mathview.setLatex(text);
-        mathview.setFontSize(100);
-        mathview.setVisibility(View.VISIBLE);
+//        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
+//        mathview.setLatex(text);
+//        mathview.setFontSize(100);
+//        mathview.setVisibility(View.VISIBLE);
         ((Button) findViewById(R.id.buttonAskAi)).setEnabled(false);
     }
 
