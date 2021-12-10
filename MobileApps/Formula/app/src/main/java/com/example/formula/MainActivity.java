@@ -14,8 +14,10 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agog.mathdisplay.MTMathView;
 
@@ -37,10 +39,11 @@ import edu.uiowa.formula.services.EquationService;
 public class MainActivity extends AppCompatActivity {
     protected final ExecutorService _executer;
     protected final Handler _mainThreadHandler;
-
     private EquationService _service;
+
     private int _pingCounter;
     private int _testPostCounter;
+    private Bitmap _image;
 
     public MainActivity() {
         _executer = Executors.newFixedThreadPool(4);
@@ -56,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         _service = new EquationService(url); //TODO: Use Factory
 
         setContentView(R.layout.activity_main);
-        updateLatex("x = \\alpha^{\\sum}");
     }
 
     public void pingApi(View view) throws IOException, InterruptedException, ExecutionException {
@@ -130,39 +132,50 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = (ImageView) this.findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
-
-            String fileDir = this.getFilesDir().getPath().toString();
-            Equation equation = new Equation(buildClientInfo());
-
-            RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
-                @Override
-                public void run() {
-                    try {
-                        Equation solvedEquation = _service.solveEquation(equation, imageBitmap, fileDir);
-                        this.postCallback(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (solvedEquation != null) {
-                                    updateLatex(solvedEquation.get_processedEquation().get_laTex());
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            _executer.submit(action);
+            _image = imageBitmap;
+            ((Button) findViewById(R.id.buttonAskAi)).setEnabled(true);
+            TextView latex_text = (TextView) this.findViewById(R.id.description);
+            latex_text.setVisibility(View.GONE);
         }
+    }
+
+    public void askAi(View view) {
+        String fileDir = this.getFilesDir().getPath().toString();
+        Equation equation = new Equation(buildClientInfo());
+
+        RunnableWithCallback action = new RunnableWithCallback(_mainThreadHandler) {
+            @Override
+            public void run() {
+                try {
+                    Equation solvedEquation = _service.solveEquation(equation, _image, fileDir);
+                    this.postCallback(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (solvedEquation != null) {
+                                updateLatex(solvedEquation.get_processedEquation().get_solvedEquation());
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Unexpected Error", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        _executer.submit(action);
     }
 
     private void updateLatex(String text) {
         TextView latex_text = (TextView) this.findViewById(R.id.description);
         latex_text.setText(text);
-        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
-        mathview.setLatex(text);
-        mathview.setFontSize(100);
+        latex_text.setTextSize(30);
+        latex_text.setVisibility(View.VISIBLE);
+//        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
+//        mathview.setLatex(text);
+//        mathview.setFontSize(100);
+//        mathview.setVisibility(View.VISIBLE);
+        ((Button) findViewById(R.id.buttonAskAi)).setEnabled(false);
     }
 
     private ClientInfo buildClientInfo(){

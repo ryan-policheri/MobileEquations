@@ -34,10 +34,10 @@ public class EquationService {
 
     public Equation solveEquation(Equation equation, Bitmap picture, String fileDir) throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        picture.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        picture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
         byte[] bytes = outputStream.toByteArray();
 
-        String uniqueFileName = fileDir + "/" + UUID.randomUUID().toString() + ".png";
+        String uniqueFileName = fileDir + "/" + UUID.randomUUID().toString() + ".jpg";
         File file = new File(uniqueFileName);
         file.createNewFile();
         FileOutputStream fileOutputStream = new FileOutputStream(file);

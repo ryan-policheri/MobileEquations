@@ -57,7 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onTakePhoto"
-            android:text="Take Photo" />
+            android:text="Take Equation Photo"
+            android:layout_marginTop="5dp"/>
 
         <ImageView
             android:id="@+id/imageView"
@@ -65,18 +66,30 @@
             android:layout_height="171dp"
             app:srcCompat="@drawable/ic_launcher_background" />
 
+        <Button
+            android:id="@+id/buttonAskAi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="askAi"
+            android:enabled="false"
+            android:text="Ask an AI!" />
+
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello Math!" />
-
-        <com.agog.mathdisplay.MTMathView
-            android:id="@+id/mathview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp" />
+            android:layout_marginTop="32dp"
+            android:text="Hello Math!"
+            android:visibility="gone"/>
+
+<!--        <com.agog.mathdisplay.MTMathView-->
+<!--            android:id="@+id/mathview"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="32dp"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            android:visibility="invisible"/>-->
     </LinearLayout>
 
 
