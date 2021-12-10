@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using DotNetCommon.Extensions;
 
 namespace DotNetCommon.SystemFunctions
@@ -124,6 +126,10 @@ namespace DotNetCommon.SystemFunctions
         public static void CreateDirectory(string directory)
         {
             Directory.CreateDirectory(directory);
+            DirectorySecurity security = new DirectorySecurity(directory, AccessControlSections.All);
+            SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            security.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ContainerInherit, PropagationFlags.None, AccessControlType.Allow));
+            security.SetAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ContainerInherit, PropagationFlags.None, AccessControlType.Allow));
         }
 
         public static string GetCurrentDirectory()
