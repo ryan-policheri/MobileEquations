@@ -11,14 +11,32 @@ def generate_neural_network():
     images, labels = load_dataset()
     images = normalize_pixels(images)
 
+    data_generator = keras.preprocessing.image.ImageDataGenerator(
+        featurewise_center=False,
+        samplewise_center=False,
+        featurewise_std_normalization=False,
+        samplewise_std_normalization=False,
+        zca_whitening=False,
+        rotation_range=10,
+        zoom_range = 0.1,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        horizontal_flip=False,
+        vertical_flip=False
+    )
+
     train_images = images[:int(len(images) * 0.8)]
     test_images = images[int(len(images) * 0.8):]
 
     train_labels = labels[:int(len(labels) * 0.8)]
     test_labels = labels[int(len(labels) * 0.8):]
 
+    train_data = data_generator.flow(train_images, train_labels)
+    test_data = data_generator.flow(test_images, test_labels)
+
     model = generate_model()
-    model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
+    #model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
+    model.fit_generator(train_data, epochs=5, validation_data=test_data)
     model.save("model")
     
 
