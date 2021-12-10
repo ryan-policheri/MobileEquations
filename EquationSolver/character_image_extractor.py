@@ -72,7 +72,7 @@ def character_image_extractor(image, full = False):
     
     # remove any tiny boxes that result from noise
     # this will avoid issues if there is a small speck close to the center and will avoid unnecessary work from specks being sent to the model
-    bounding_boxes = list(filter(lambda x: not (is_small(image, x, 0.0001)), bounding_boxes))
+    bounding_boxes = list(filter(lambda x: not (is_small(image, x, 0.0005)), bounding_boxes))
     
     # order boxes left to right
     sorted_boxes = sorted(bounding_boxes, key = lambda x: x[2])
