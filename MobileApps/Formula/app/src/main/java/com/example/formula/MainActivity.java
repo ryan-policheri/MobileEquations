@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageBitmap(imageBitmap);
             _image = imageBitmap;
             ((Button) findViewById(R.id.buttonAskAi)).setEnabled(true);
+            TextView latex_text = (TextView) this.findViewById(R.id.description);
+            latex_text.setVisibility(View.GONE);
         }
     }
 
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             if (solvedEquation != null) {
-                                updateLatex(solvedEquation.get_processedEquation().get_laTex());
+                                updateLatex(solvedEquation.get_processedEquation().get_solvedEquation());
                             }
                         }
                     });
@@ -167,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateLatex(String text) {
         TextView latex_text = (TextView) this.findViewById(R.id.description);
         latex_text.setText(text);
+        latex_text.setTextSize(30);
+        latex_text.setVisibility(View.VISIBLE);
 //        MTMathView mathview = (MTMathView) this.findViewById(R.id.mathview);
 //        mathview.setLatex(text);
 //        mathview.setFontSize(100);
