@@ -72,17 +72,24 @@ namespace DotNetCommon.SystemFunctions
             startInfo.Arguments = wrappedArgs;
             if (!String.IsNullOrWhiteSpace(workingDirectory)) startInfo.WorkingDirectory = workingDirectory;
             process.StartInfo = startInfo;
-            process.Start();
-            DateTime startTime = process.StartTime; //do this up here for linux compatibility
-            process.WaitForExit();
-            if (process.ExitCode != 0)
+            int exitCode = Int32.MinValue;
+
+            try
             {
-                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace))
-                    wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
-                throw new Exception("An error occured while executing the following process: " + SystemProcessFile +
-                                    " " + wrappedArgs + ". The exit code was " + process.ExitCode  +". The user was: " + SystemFunctions.User);
+                process.Start();
+                DateTime startTime = process.StartTime; //do this up here for linux compatibility
+                process.WaitForExit();
+                exitCode = process.ExitCode;
+                if (exitCode != 0) throw new Exception(); //Let the catch handle and throw the deats
+                else return new ProcessStats(startTime, process.ExitTime, true);
             }
-            else return new ProcessStats(startTime, process.ExitTime, true);
+            catch (Exception ex)
+            {
+                if (!String.IsNullOrWhiteSpace(senstiveParameterInfoToReplace)) wrappedArgs = wrappedArgs.Replace(senstiveParameterInfoToReplace, "***");
+                throw new Exception("An error occured while executing the following process: " + SystemProcessFile +
+                                    " " + wrappedArgs + ". The exit code was " + exitCode +
+                                    ". The user was: " + SystemFunctions.User + " The working directory was: " + workingDirectory);
+            }
         }
 
         public static void RunSystemProcess(string arguments, string workingDirectory = null, string senstiveCommandInfoToReplace = null)

@@ -29,7 +29,7 @@ namespace MobileEquations.Services
 
             ICollection<string> args = new List<string>() { _config.EquationSolverScript, photoFilePath, outputFilePath };
             if (!_config.EquationSolverIsPackaged) args = args.Prepend(_config.PythonExecutable).ToList(); //Executing through python, add python as the first argument
-            _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}");
+            _logger.LogInformation($"Executing the following args as a system process: {args.ToDelimitedList(' ')}. The directory context is: { _config.EquationSolverOwningDirectory}");
             SystemFunctions.RunSystemProcess(args.ToArray(), _config.EquationSolverOwningDirectory);
 
             string output = SystemFunctions.ReadAllText(outputFilePath);
