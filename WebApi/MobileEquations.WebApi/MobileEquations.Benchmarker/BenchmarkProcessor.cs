@@ -39,7 +39,7 @@ namespace MobileEquations.Benchmarker
             foreach (Trial trial in trials)
             {
                 trial.FilePath = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, trial.FileName);
-                ExecuteThroughPython(trial);
+                await ExecuteThroughApi(trial);
             }
             foreach (Trial trial in trials)
             {
@@ -49,7 +49,7 @@ namespace MobileEquations.Benchmarker
             foreach (Trial trial in trials)
             {
                 trial.FilePath = SystemFunctions.CombineDirectoryComponents(_config.BenchmarkDatasetDirectory, trial.FileName);
-                await ExecuteThroughApi(trial);
+                ExecuteThroughPython(trial);
             }
 
             return trials;
