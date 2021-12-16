@@ -74,6 +74,8 @@ cp ./Configs/appsettings.benchmark.json ./Benchmarker/appsettings.json
 dotnet publish ./Repos/MobileEquations/WebApi/MobileEquations.WebApi/MobileEquations.Benchmarker/MobileEquations.Benchmarker.dll --output Benchmarker
 sudo systemctl enable /home/ec2-user/Configs/ServiceSpec.service
 
+scp -i "C:\Users\Ryan-\OneDrive\Documents\My Documents\Grad School\Courses\Mobile Computing\DefaultKey.pem" -r  ec2-user@ec2-54-159-0-59.compute-1.amazonaws.com:/home/ec2-user/Repos/MobileEquations/EquationSolver/model "C:\Users\Ryan-\OneDrive\Documents\My Documents\Grad School\Courses\Mobile Computing\AWSGened_Model"
+
 #Redeploy
 cd ~/Repos/MobileEquations
 git pull
